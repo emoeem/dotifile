@@ -1,0 +1,8 @@
+# 排除运行时数据、缓存、大文件仓库等
+dot_config/mpv/.git/
+dot_config/mpv/archive/
+dot_config/mpv/cache/
+dot_config/mpv/files/
+dot_config/mpv/vs/
+# 着色器和字体可从上游重新获取
+dot_config/mpv/shaders/

@@ -1,0 +1,54 @@
+[mgr]
+sort_by = "extension"
+sort_sensitive = true
+sort_reverse = false
+sort_dir_first = true
+show_hidden = true
+show_symlink = true
+linemode = "btime"
+
+[preview]
+wrap = "yes"
+image_filter = "lanczos3"
+
+# ================================
+# Plugin Previewers
+# ================================
+[[plugin.prepend_previewers]]
+mime = "{audio,video,image}/*"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "application/subrip"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "application/postscript"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "application/bittorrent"
+run = "torrent-preview"
+
+# ================================
+# Plugin Preloaders
+# ================================
+[[plugin.prepend_preloaders]]
+mime = "{audio,video,image}/*"
+run = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+mime = "application/subrip"
+run = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+mime = "application/postscript"
+run = "mediainfo"
+
+# ================================
+# Tasks
+# ================================
+[tasks]
+image_alloc = 1073741824  # = 1024*1024*1024 = 1024MB
+
+
