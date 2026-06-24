@@ -176,6 +176,8 @@ end
 
 if test -f /usr/share/cachyos-fish-config/cachyos-config.fish
     source /usr/share/cachyos-fish-config/cachyos-config.fish
+    # 覆盖 CachyOS 预设中的 fish_greeting，禁止自动运行 fastfetch
+    function fish_greeting; end
 end
 
 
