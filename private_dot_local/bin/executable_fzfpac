@@ -1,67 +1,25 @@
 #!/bin/bash
-# fzfpac - fzf 搜索 Arch Linux 包并安装
-# 用法: fzfpac [包名]
-#   无参数: 交互式 fzf 浏览选择包
-#   有参数: 直接传给 pacman -S
+# fzfpac:summary=Show a fuzzy-finder TUI for picking new Arch packages to install.
+# fzfpac:requires-sudo=true
 
-set -euo pipefail
-
-# --- sudo 保活：后台刷新 sudo 会话 ---
-sudo_keepalive() {
-  sudo -v
-  while true; do
-    sudo -n true 2>/dev/null || break
-    sleep 60
-  done &
-}
-
-show_done() {
-  local cols="${1:-50}"
-  local msg="✓ 安装完成"
-  printf "\n\033[1;32m%*s\033[0m\n" $(( (${#msg} + cols) / 2 )) "$msg"
-}
-
-# --- 直接安装模式 ---
-if [[ $# -gt 0 ]]; then
-  sudo_keepalive
-  sudo pacman -S --noconfirm "$@"
-  show_done
-  exit 0
-fi
-
-# --- 交互式 fzf 模式 ---
-FZF_ARGS=(
+fzf_args=(
   --multi
-  --header-lines 0
-  --preview 'pacman -Sii {1} 2>/dev/null | head -40'
-  --preview-label 'alt-p: 切换预览 · alt-j/k: 滚动 · tab: 多选'
-  --preview-label-pos 'bottom'
+  --preview 'pacman -Sii {1}'
+  --preview-label='alt-p: toggle description, alt-j/k: scroll, tab: multi-select'
+  --preview-label-pos='bottom'
   --preview-window 'down:65%:wrap'
   --bind 'alt-p:toggle-preview'
   --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
   --bind 'alt-k:preview-up,alt-j:preview-down'
   --color 'pointer:green,marker:green'
-  --prompt '搜索包> '
-  --header 'Tab: 选择 · Enter: 安装 · Esc/C-c: 取消'
 )
 
-pkg_names=$(pacman -Slq | fzf "${FZF_ARGS[@]}")
+pkg_names=$(pacman -Slq | fzf "${fzf_args[@]}")
 
-if [[ -z $pkg_names ]]; then
-  echo "未选择任何包。"
-  exit 0
+if [[ -n $pkg_names ]]; then
+  source omarchy-sudo-keepalive
+
+  # Convert newline-separated selections to space-separated for pacman
+  echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -S --noconfirm
+  omarchy-show-done
 fi
-
-# 统计选择数量
-count=$(echo "$pkg_names" | wc -l)
-echo ""
-echo "已选择 $count 个包："
-echo "$pkg_names"
-echo ""
-
-sudo_keepalive
-
-# 安装
-echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -S --noconfirm
-
-show_done

@@ -1,0 +1,7 @@
+#!/bin/bash
+# Keep sudo session alive during long operations
+sudo -v
+while true; do
+  sudo -n true 2>/dev/null || break
+  sleep 60
+done &
