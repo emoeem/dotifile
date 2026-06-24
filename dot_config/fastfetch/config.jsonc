@@ -17,20 +17,30 @@
       "keyColor": "cyan"
     },
     {
+      "type": "board",
+      "key": "  ├  �主板",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "bios",
+      "key": "  ├   bios",
+      "keyColor": "cyan"
+    },
+    {
       "type": "cpu",
       "key": "  ├  cpu",
       "showPeCoreCount": true,
       "keyColor": "cyan"
     },
     {
-      "type": "cpuusage",
-      "key": "  ├   cpu 使用率",
-      "keyColor": "cyan"
-    },
-    {
       "type": "gpu",
       "key": "  ├  gpu",
       "detectionMethod": "pci",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "vulkan",
+      "key": "  ├  vulkan",
       "keyColor": "cyan"
     },
     {
@@ -49,13 +59,13 @@
       "keyColor": "cyan"
     },
     {
-      "type": "diskio",
-      "key": "  ├   磁盘 IO",
+      "type": "memory",
+      "key": "  ├   内存",
       "keyColor": "cyan"
     },
     {
-      "type": "memory",
-      "key": "  ├   内存",
+      "type": "physicalmemory",
+      "key": "  ├   内存条",
       "keyColor": "cyan"
     },
     {
@@ -66,6 +76,11 @@
     {
       "type": "battery",
       "key": "  ├   电池",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "brightness",
+      "key": "  ├  󰃟 亮度",
       "keyColor": "cyan"
     },
     {
@@ -103,6 +118,16 @@
       "keyColor": "magenta"
     },
     {
+      "type": "theme",
+      "key": "  ├  󰉼 主题",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "icons",
+      "key": "  ├  󰀻 图标",
+      "keyColor": "magenta"
+    },
+    {
       "type": "initSystem",
       "key": "  ├   init",
       "keyColor": "magenta"
@@ -110,6 +135,11 @@
     {
       "type": "locale",
       "key": "  ├   语言",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "editor",
+      "key": "  ├   编辑器",
       "keyColor": "magenta"
     },
     {
@@ -147,8 +177,19 @@
       "keyColor": "green"
     },
     {
+      "type": "command",
+      "key": "  ├  󰃵 mac 地址",
+      "keyColor": "green",
+      "text": "ip link 2>/dev/null | grep -m1 'link/ether' | awk '{print $2}' || echo 'N/A'"
+    },
+    {
       "type": "publicip",
       "key": "  ├  󰖩 公网 IP",
+      "keyColor": "green"
+    },
+    {
+      "type": "dns",
+      "key": "  ├  dns",
       "keyColor": "green"
     },
     {
@@ -162,9 +203,10 @@
       "keyColor": "green"
     },
     {
-      "type": "netio",
-      "key": "  └  󰞒 网络 IO",
-      "keyColor": "green"
+      "type": "command",
+      "key": "  └  󰒓 网关",
+      "keyColor": "green",
+      "text": "ip route 2>/dev/null | grep default | awk '{print $3}' | head -1 || echo 'N/A'"
     },
     {
       "type": "custom",
@@ -173,7 +215,7 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────── 性能 ───────────────────────┐"
+      "format": "\u001b[90m┌──────────────────── 状态 ───────────────────────┐"
     },
     {
       "type": "loadavg",
@@ -188,9 +230,26 @@
     },
     {
       "type": "command",
-      "key": "  └  󰅐 上线时间",
+      "key": "  ├  󰃵 系统安装",
       "keyColor": "yellow",
-      "text": "uptime -p 2>/dev/null | sed 's/up //' || uptime | awk -F'up ' '{print $2}' | awk -F',' '{print $1}'"
+      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天前"
+    },
+    {
+      "type": "uptime",
+      "key": "  ├  󱫐 已运行",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "datetime",
+      "key": "  ├   当前时间",
+      "format": "{year}-{month}-{day} {hour}:{minute}:{second}",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "command",
+      "key": "  └  󰏗 可更新",
+      "keyColor": "yellow",
+      "text": "pacman -Qu 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个"
     },
     {
       "type": "custom",
@@ -199,25 +258,27 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────── 状态 ───────────────────────┐"
+      "format": "\u001b[90m┌────────────── 用户 ──────────────────────────────┐"
     },
     {
-      "type": "command",
-      "key": "  󰃵 系统安装",
-      "keyColor": "cyan",
-      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天前"
+      "type": "users",
+      "key": "   登录用户",
+      "keyColor": "blue"
     },
     {
-      "type": "datetime",
-      "key": "  ├   当前时间",
-      "format": "{hour}:{minute}:{second}",
-      "keyColor": "cyan"
+      "type": "terminalSize",
+      "key": "  ├   终端尺寸",
+      "keyColor": "blue"
     },
     {
-      "type": "command",
-      "key": "  └  󰏗 可更新",
-      "keyColor": "cyan",
-      "text": "pacman -Qu 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个"
+      "type": "sound",
+      "key": "  ├   音频设备",
+      "keyColor": "blue"
+    },
+    {
+      "type": "player",
+      "key": "  └  󰎈 正在播放",
+      "keyColor": "blue"
     },
     {
       "type": "custom",
