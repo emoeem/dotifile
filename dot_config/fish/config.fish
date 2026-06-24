@@ -223,25 +223,6 @@ function e -d "同 v，编辑文件"
     v $argv
 end
 
-# --- 目录跳转：c / fcd ---
-function c -d "用 fzf 选目录并 cd"
-    if count $argv >/dev/null
-        cd $argv
-    else if type -q fzf; and type -q fd
-        set dir (fd --type d --hidden --follow --exclude .git | fzf --preview 'eza -T --level=2 --color=always {} | head -200' --preview-window right:60%:wrap --prompt "Cd> ")
-        if test -n "$dir"
-            cd "$dir"
-        end
-    else
-        echo "fzf or fd not installed"
-        return 1
-    end
-end
-
-function fcd -d "同 c，快速 cd"
-    c $argv
-end
-
 # --- 进程管理：k / fkill ---
 function k -d "用 fzf 选进程并 kill"
     if count $argv >/dev/null
@@ -260,32 +241,6 @@ end
 
 function fkill -d "同 k，kill 进程"
     k $argv
-end
-
-# --- SSH 连接：s / fssh ---
-function s -d "用 fzf 选 SSH 主机并连接"
-    if count $argv >/dev/null
-        ssh $argv
-    else if type -q fzf
-        set hosts (cat ~/.ssh/known_hosts 2>/dev/null | awk '{print $1}' | sed 's/\[//g; s/\]//g; s/:.*//g' | sort -u)
-        set config_hosts (awk '/^Host / && !/\*/ {print $2}' ~/.ssh/config 2>/dev/null)
-        set all_hosts (echo $hosts $config_hosts | tr ' ' '\n' | sort -u | string collect)
-        if test -z "$all_hosts"
-            echo "No SSH hosts found in ~/.ssh/known_hosts or ~/.ssh/config"
-            return 1
-        end
-        set target (echo $all_hosts | fzf --prompt "SSH> ")
-        if test -n "$target"
-            ssh "$target"
-        end
-    else
-        echo "fzf not installed"
-        return 1
-    end
-end
-
-function fssh -d "同 s，SSH 连接"
-    s $argv
 end
 
 # --- Git 分支切换：gco 函数（替代 abbr）---
@@ -316,33 +271,6 @@ function gsh -d "用 fzf 浏览 Git 提交并 show"
     end
 end
 
-# --- Pacman 包管理（已由独立脚本 fzfpac/fzfrm/fzfaur 替代）---
-
-# --- 环境变量查看：envf ---
-function envf -d "用 fzf 搜索环境变量"
-    if type -q fzf
-        set var (env | fzf --prompt "Env> " --preview 'echo $ {1}' | cut -d= -f1)
-        if test -n "$var"
-            echo "$$var = "$$var
-        end
-    else
-        env
-    end
-end
-
-# --- 历史命令直接执行：fh ---
-function fh -d "用 fzf 搜索历史并执行"
-    if type -q fzf
-        set cmd (history | fzf --tac --prompt "History> " --preview 'echo {}' --preview-window down:3)
-        if test -n "$cmd"
-            eval $cmd
-        end
-    else
-        history
-    end
-end
-
-
 # --- tldr：man 的现代化替代 ---
 # 优先用 tldr 查速查表，找不到再回退到传统 man
 # 安装：sudo pacman -S tldr
@@ -360,44 +288,6 @@ if type -q tldr
             command man $argv
         else
             command man
-        end
-    end
-end
-
-# --- jless：JSON 交互式查看器 ---
-# 安装：sudo pacman -S jless
-# 用法：jl file.json（无参数时 fzf 选 json 文件）
-if type -q jless
-    function jl -d "用 jless 查看 JSON，无参数时 fzf 选择"
-        if count $argv >/dev/null
-            jless $argv
-        else if type -q fzf; and type -q fd
-            set file (fd --type f --extension json --hidden --follow --exclude .git | fzf --prompt "JSON> " --preview 'bat --language json --color=always --line-range :50 {}' --preview-window right:60%:wrap)
-            if test -n "$file"
-                jless "$file"
-            end
-        else
-            echo "Usage: jl <file.json> or install fzf+fd"
-            return 1
-        end
-    end
-end
-
-# --- glow：Markdown 终端渲染 ---
-# 安装：sudo pacman -S glow
-# 用法：md README.md（无参数时 fzf 选 md 文件）
-if type -q glow
-    function md -d "用 glow 查看 Markdown，无参数时 fzf 选择"
-        if count $argv >/dev/null
-            glow $argv
-        else if type -q fzf; and type -q fd
-            set file (fd --type f --extension md --hidden --follow --exclude .git | fzf --prompt "Markdown> " --preview 'bat --language markdown --color=always --line-range :30 {}' --preview-window right:60%:wrap)
-            if test -n "$file"
-                glow "$file"
-            end
-        else
-            echo "Usage: md <file.md> or install fzf+fd"
-            return 1
         end
     end
 end
@@ -454,8 +344,3 @@ end
 if type -q onefetch
     abbr -a -- repo 'onefetch'
 end
-
-
-
-
-
