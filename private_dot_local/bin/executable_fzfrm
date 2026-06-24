@@ -1,0 +1,23 @@
+#!/bin/bash
+# fzfrm:summary=Show a fuzzy-finder TUI for picking packages installed on the system to be removed.
+# fzfrm:requires-sudo=true
+
+fzf_args=(
+  --multi
+  --height 100%
+  --preview 'yay -Qi {1}'
+  --preview-label='alt-p: 切换说明 · alt-j/k: 滚动 · tab: 多选'
+  --preview-label-pos='bottom'
+  --preview-window 'down:65%:wrap'
+  --bind 'alt-p:toggle-preview'
+  --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
+  --bind 'alt-k:preview-up,alt-j:preview-down'
+  --color 'pointer:red,marker:red'
+)
+
+pkg_names=$(yay -Qqe | fzf "${fzf_args[@]}")
+
+if [[ -n $pkg_names ]]; then
+  echo "$pkg_names" | tr '\n' ' ' | xargs sudo pacman -Rns --noconfirm
+  omarchy-show-done
+fi
