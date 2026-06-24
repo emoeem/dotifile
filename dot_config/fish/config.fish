@@ -27,7 +27,7 @@ set -gx VISUAL $EDITOR
 set -gx LESS "--RAW-CONTROL-CHARS --no-init --quit-if-one-screen --ignore-case"
 
 # bat 美化配置
-set -gx BAT_THEME "TwoDark"
+set -gx BAT_THEME "Dracula"
 set -gx BAT_STYLE "numbers,changes,header"
 
 # atuin 历史过滤：按当前目录过滤，同目录下的命令优先
@@ -61,8 +61,8 @@ if type -q fzf
     set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always --line-range :500 {}' --preview-window right:60%:wrap"
     set -gx FZF_ALT_C_OPTS "--preview 'eza -T --level=2 --color=always {} | head -200' --preview-window right:60%:wrap"
 
-    # 全局外观：80% 高度、输入框置底、带边框、循环选择
-    set -gx FZF_DEFAULT_OPTS "--height 80% --layout=reverse --border --inline-info --cycle"
+    # 全局外观：80% 高度、输入框置底、带边框、循环选择、预览区上下翻动
+    set -gx FZF_DEFAULT_OPTS "--height 80% --layout=reverse --border --inline-info --cycle --bind alt-k:preview-up,alt-j:preview-down"
 end
 
 
@@ -307,7 +307,7 @@ function gsh -d "用 fzf 浏览 Git 提交并 show"
     if count $argv >/dev/null
         git show $argv
     else if type -q fzf
-        set commit (git log --oneline --all --color=always | fzf --ansi --prompt "Show> " --preview 'git show --color=always {1} | delta' --preview-window right:60% | awk '{print $1}')
+        set commit (git log --oneline --all --color=always | fzf --ansi --prompt "Show> " --preview 'git show --color=always {1} | delta' --preview-window right:60%:wrap | awk '{print $1}')
         if test -n "$commit"
             git show "$commit"
         end
