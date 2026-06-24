@@ -280,9 +280,9 @@ function _atuin_fzf_search
             --bind 'alt-k:preview-up,alt-j:preview-down' \
             --prompt "History> ")
     if test -n "$result"
-        commandline -- $result
+        commandline -r -- $result
+        commandline -f execute
     end
-    commandline -f repaint
 end
 
 if type -q atuin; and type -q fzf
