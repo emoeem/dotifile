@@ -1,0 +1,122 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "builtin",
+    "color": { "1": "cyan" },
+    "padding": { "top": 1, "right": 4, "left": 2 }
+  },
+  "modules": [
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[90m┌────────────────────── 硬件 ──────────────────────┐"
+    },
+    {
+      "type": "host",
+      "key": "   主机",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "cpu",
+      "key": "  ├  cpu",
+      "showPeCoreCount": true,
+      "keyColor": "cyan"
+    },
+    {
+      "type": "gpu",
+      "key": "  ├  gpu",
+      "detectionMethod": "pci",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "display",
+      "key": "  ├   显示器",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "disk",
+      "key": "  ├  󰋊 磁盘",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "memory",
+      "key": "  ├   内存",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "swap",
+      "key": "  └  󰓡 交换",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[90m┌────────────────────── 软件 ──────────────────────┐"
+    },
+    {
+      "type": "kernel",
+      "key": "   内核",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "de",
+      "key": "   桌面",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "terminalfont",
+      "key": "  ├   终端字体",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "terminal",
+      "key": "  ├   终端",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "shell",
+      "key": "  ├   shell",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "packages",
+      "key": "  └  󰏖 包数量",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[90m┌──────────────────── 运行状态 ────────────────────┐"
+    },
+    {
+      "type": "command",
+      "key": "  󱦟 系统已装",
+      "keyColor": "yellow",
+      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天"
+    },
+    {
+      "type": "uptime",
+      "key": "  󱫐 已运行",
+      "keyColor": "yellow"
+    },
+    {
+      "type": "command",
+      "key": "  󰏗 可更新",
+      "keyColor": "yellow",
+      "text": "pacman -Qu 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break"
+  ]
+}
