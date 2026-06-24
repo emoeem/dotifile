@@ -1,0 +1,14 @@
+#!/usr/bin/fish
+# fzf 搜索进程并 kill
+if count $argv >/dev/null
+    kill $argv
+else if type -q fzf
+    set pid (ps aux | sed 1d | fzf --multi --header "[Ctrl+A 全选 | Tab 多选 | Enter 确认]" --prompt "Kill> " | awk '{print $2}')
+    if test -n "$pid"
+        echo "Killing: $pid"
+        kill $pid
+    end
+else
+    echo "fzf not installed"
+    exit 1
+end

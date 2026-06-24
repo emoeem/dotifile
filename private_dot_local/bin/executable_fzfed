@@ -1,0 +1,13 @@
+#!/usr/bin/fish
+# fzf 搜索文件并用编辑器打开
+if count $argv >/dev/null
+    $EDITOR $argv
+else if type -q fzf
+    set file (fzf --preview 'bat --color=always --line-range :500 {}' --preview-window right:60%:wrap --prompt "Edit> ")
+    if test -n "$file"
+        $EDITOR "$file"
+    end
+else
+    echo "fzf not installed"
+    exit 1
+end
