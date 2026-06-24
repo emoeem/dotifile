@@ -137,15 +137,6 @@ abbr -a -- mkdirp 'mkdir -p'
 # 6. 自定义函数
 # --------------------------------------------
 
-# SSH 连接时精简 fastfetch，本地显示完整信息
-function fish_greeting
-    if test -n "$SSH_CONNECTION"
-        fastfetch --logo none --structure Title:Separator:OS:Host:Kernel:Uptime:Packages:Shell:Terminal:CPU:Memory:LocalIP
-    else
-        fastfetch
-    end
-end
-
 # yazi 文件管理器：退出后自动切换到当前所在目录
 # 依赖：sudo pacman -S yazi
 function yy

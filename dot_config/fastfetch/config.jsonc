@@ -45,7 +45,12 @@
     },
     {
       "type": "swap",
-      "key": "  └  󰓡 交换",
+      "key": "  ├  󰓡 交换",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "battery",
+      "key": "  └   电池",
       "keyColor": "cyan"
     },
     {
@@ -64,7 +69,12 @@
     },
     {
       "type": "de",
-      "key": "   桌面",
+      "key": "   桌面环境",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "wm",
+      "key": "  ├   窗口管理器",
       "keyColor": "magenta"
     },
     {
@@ -94,6 +104,31 @@
     "break",
     {
       "type": "custom",
+      "format": "\u001b[90m┌──────────────────── 网络 ───────────────────────┐"
+    },
+    {
+      "type": "localip",
+      "key": "  󰩟 本地 IP",
+      "keyColor": "green"
+    },
+    {
+      "type": "command",
+      "key": "  ├  󰤨 WiFi",
+      "keyColor": "green",
+      "text": "iw dev 2>/dev/null | grep ssid | sed 's/.*ssid //' | head -1 || echo '未连接'"
+    },
+    {
+      "type": "bluetooth",
+      "key": "  └   蓝牙",
+      "keyColor": "green"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
       "format": "\u001b[90m┌──────────────────── 运行状态 ────────────────────┐"
     },
     {
@@ -112,6 +147,12 @@
       "key": "  󰏗 可更新",
       "keyColor": "yellow",
       "text": "pacman -Qu 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个"
+    },
+    {
+      "type": "command",
+      "key": "  └   音频",
+      "keyColor": "yellow",
+      "text": "pactl info 2>/dev/null | grep 'Default Sink' | sed 's/.*: //' | head -1 || echo 'N/A'"
     },
     {
       "type": "custom",
