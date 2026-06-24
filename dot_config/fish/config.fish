@@ -197,9 +197,21 @@ end
 # 无感集成：常用命令自动调用 fzf
 # ============================================
 
-# --- Ctrl+R: 调用 fzf-history 脚本 ---
+# --- Ctrl+R: Atuin + fzf 历史搜索 ---
+function _atuin_fzf_search
+    set result (atuin history list --cmd-only 2>/dev/null | awk '!seen[$0]++' | \
+        fzf --height 100% \
+            --preview 'echo {}' \
+            --preview-window 'right:60%:wrap' \
+            --bind 'alt-k:preview-up,alt-j:preview-down' \
+            --prompt "History> ")
+    if test -n "$result"
+        commandline -r -- $result
+        commandline -f execute
+    end
+end
 if type -q atuin; and type -q fzf
-    bind \cr 'fzf-history; commandline -f repaint'
+    bind \cr _atuin_fzf_search
 end
 
 # --- tldr：man 的现代化替代 ---
@@ -246,13 +258,6 @@ if type -q ouch
     abbr -a -- compress-list 'ouch list'
 end
 
-# --- bottom：系统监控器 ---
-# 安装：sudo pacman -S bottom
-# 用法：btm（比 htop 更美观，支持鼠标、进程树、网络图）
-if type -q btm
-    abbr -a -- top 'btm'
-    abbr -a -- top-basic 'btm --basic'  # 简化模式，资源占用更低
-end
 
 # --- procs：现代化进程查看 ---
 # 安装：sudo pacman -S procs

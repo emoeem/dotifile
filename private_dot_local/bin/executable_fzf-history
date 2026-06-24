@@ -8,7 +8,6 @@ if type -q atuin; and type -q fzf
             --bind 'alt-k:preview-up,alt-j:preview-down' \
             --prompt "History> ")
     if test -n "$result"
-        commandline -r -- $result
-        commandline -f execute
+        echo "$result"
     end
 end
