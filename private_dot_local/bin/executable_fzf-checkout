@@ -1,0 +1,12 @@
+#!/usr/bin/fish
+# fzf 搜索 git 分支并 checkout
+if count $argv >/dev/null
+    git checkout $argv
+else if type -q fzf
+    set branch (git branch -a --format='%(refname:short)' 2>/dev/null | fzf --prompt "Checkout> " --preview 'git log --oneline --color=always {1} | head -20' --preview-window right:60%:wrap)
+    if test -n "$branch"
+        git checkout "$branch"
+    end
+else
+    git checkout
+end

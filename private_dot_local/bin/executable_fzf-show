@@ -1,0 +1,12 @@
+#!/usr/bin/fish
+# fzf 搜索 git commit 并 show
+if count $argv >/dev/null
+    git show $argv
+else if type -q fzf
+    set commit (git log --oneline --all --color=always | fzf --ansi --prompt "Show> " --preview 'git show --color=always {1} | delta' --preview-window right:60%:wrap | awk '{print $1}')
+    if test -n "$commit"
+        git show "$commit"
+    end
+else
+    git show
+end

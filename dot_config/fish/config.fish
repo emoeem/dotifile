@@ -50,15 +50,15 @@ if type -q fzf
         fzf_key_bindings
     end
 
-    # 用 fd 替代 find 作为搜索源（更快、自动遵守 .gitignore）
+    # 用 fd 替代 find（更快、避免 node_modules 等重目录）
     if type -q fd
-        set -gx FZF_DEFAULT_COMMAND "fd --type f --hidden --follow --exclude .git"
+        set -gx FZF_DEFAULT_COMMAND "fd --type f --hidden --follow --exclude .git --exclude node_modules --exclude .cache --exclude target --exclude build --exclude .local --exclude .npm --exclude .cargo --exclude __pycache__ --exclude .mozilla --exclude .gradle"
         set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
-        set -gx FZF_ALT_C_COMMAND "fd --type d --hidden --follow --exclude .git"
+        set -gx FZF_ALT_C_COMMAND "fd --type d --hidden --follow --max-depth 8 --exclude .git --exclude node_modules --exclude .cache --exclude target"
     end
 
-    # 预览配置：右侧窗口实时预览文件/目录内容
-    set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always --line-range :500 {}' --preview-window right:60%:wrap"
+    # 预览配置：右侧窗口实时预览文件/目录内容（限制预览行数减轻负载）
+    set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always --line-range :100 {}' --preview-window right:60%:wrap"
     set -gx FZF_ALT_C_OPTS "--preview 'eza -T --level=2 --color=always {} | head -200' --preview-window right:60%:wrap"
 
     # 全局外观：80% 高度、输入框置底、带边框、循环选择、预览区上下翻动
@@ -197,89 +197,29 @@ end
 # 无感集成：常用命令自动调用 fzf
 # ============================================
 
-# --- 文件编辑：v / e ---
-function v -d "用 fzf 选文件并编辑"
-    if count $argv >/dev/null
-        $EDITOR $argv
-    else if type -q fzf
-        set file (fzf --preview 'bat --color=always --line-range :500 {}' --preview-window right:60%:wrap --prompt "Edit> ")
-        if test -n "$file"
-            $EDITOR "$file"
-        end
-    else
-        echo "fzf not installed"
-        return 1
-    end
+# --- 独立脚本别名（对应 ~/.local/bin/fzf-*）---
+function v -d "fzf 编辑文件"
+    fzf-edit $argv
+end
+function e -d "同 v"
+    fzf-edit $argv
+end
+function k -d "fzf 杀进程"
+    fzf-kill $argv
+end
+function fkill -d "同 k"
+    fzf-kill $argv
+end
+function gco -d "fzf 切换分支"
+    fzf-checkout $argv
+end
+function gsh -d "fzf 查看提交"
+    fzf-show $argv
 end
 
-function e -d "同 v，编辑文件"
-    v $argv
-end
-
-# --- 进程管理：k / fkill ---
-function k -d "用 fzf 选进程并 kill"
-    if count $argv >/dev/null
-        kill $argv
-    else if type -q fzf
-        set pid (ps aux | sed 1d | fzf --multi --header "[Ctrl+A 全选 | Tab 多选 | Enter 确认]" --prompt "Kill> " | awk '{print $2}')
-        if test -n "$pid"
-            echo "Killing: $pid"
-            kill $pid
-        end
-    else
-        echo "fzf not installed"
-        return 1
-    end
-end
-
-function fkill -d "同 k，kill 进程"
-    k $argv
-end
-
-# --- Git 分支切换：gco 函数（替代 abbr）---
-function gco -d "用 fzf 选 Git 分支并 checkout"
-    if count $argv >/dev/null
-        git checkout $argv
-    else if type -q fzf
-        set branch (git branch -a --format='%(refname:short)' 2>/dev/null | fzf --prompt "Checkout> " --preview 'git log --oneline --color=always {1} | head -20' --preview-window right:60%:wrap)
-        if test -n "$branch"
-            git checkout "$branch"
-        end
-    else
-        git checkout
-    end
-end
-
-# --- Git 查看提交：gsh ---
-function gsh -d "用 fzf 浏览 Git 提交并 show"
-    if count $argv >/dev/null
-        git show $argv
-    else if type -q fzf
-        set commit (git log --oneline --all --color=always | fzf --ansi --prompt "Show> " --preview 'git show --color=always {1} | delta' --preview-window right:60%:wrap | awk '{print $1}')
-        if test -n "$commit"
-            git show "$commit"
-        end
-    else
-        git show
-    end
-end
-
-# --- Ctrl+R: Atuin 历史搜索（fzf 右侧预览替代默认界面）---
-function _atuin_fzf_search
-    set result (atuin history list --cmd-only 2>/dev/null | awk '!seen[$0]++' | \
-        fzf --height 100% \
-            --preview 'echo {}' \
-            --preview-window 'right:60%:wrap' \
-            --bind 'alt-k:preview-up,alt-j:preview-down' \
-            --prompt "History> ")
-    if test -n "$result"
-        commandline -r -- $result
-        commandline -f execute
-    end
-end
-
+# --- Ctrl+R: 调用 fzf-history 脚本 ---
 if type -q atuin; and type -q fzf
-    bind \cr _atuin_fzf_search
+    bind \cr 'fzf-history; commandline -f repaint'
 end
 
 # --- tldr：man 的现代化替代 ---

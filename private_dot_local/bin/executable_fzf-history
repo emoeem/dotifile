@@ -1,0 +1,14 @@
+#!/usr/bin/fish
+# fzf 搜索 atuin 历史并直接执行
+if type -q atuin; and type -q fzf
+    set result (atuin history list --cmd-only 2>/dev/null | awk '!seen[$0]++' | \
+        fzf --height 100% \
+            --preview 'echo {}' \
+            --preview-window 'right:60%:wrap' \
+            --bind 'alt-k:preview-up,alt-j:preview-down' \
+            --prompt "History> ")
+    if test -n "$result"
+        commandline -r -- $result
+        commandline -f execute
+    end
+end
