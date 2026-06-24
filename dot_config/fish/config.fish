@@ -273,7 +273,7 @@ end
 
 # --- Ctrl+R: Atuin 历史搜索（fzf 右侧预览替代默认界面）---
 function _atuin_fzf_search
-    set result (atuin history list --cmd-only 2>/dev/null | \
+    set result (atuin history list --cmd-only 2>/dev/null | awk '!seen[$0]++' | \
         fzf --height 100% \
             --preview 'echo {}' \
             --preview-window 'right:60%:wrap' \
