@@ -271,6 +271,24 @@ function gsh -d "用 fzf 浏览 Git 提交并 show"
     end
 end
 
+# --- Ctrl+R: Atuin 历史搜索（fzf 右侧预览替代默认界面）---
+function _atuin_fzf_search
+    set result (atuin history list --cmd-only 2>/dev/null | \
+        fzf --height 100% \
+            --preview 'echo {}' \
+            --preview-window 'right:60%:wrap' \
+            --bind 'alt-k:preview-up,alt-j:preview-down' \
+            --prompt "History> ")
+    if test -n "$result"
+        commandline -- $result
+    end
+    commandline -f repaint
+end
+
+if type -q atuin; and type -q fzf
+    bind \cr _atuin_fzf_search
+end
+
 # --- tldr：man 的现代化替代 ---
 # 优先用 tldr 查速查表，找不到再回退到传统 man
 # 安装：sudo pacman -S tldr
