@@ -197,26 +197,6 @@ end
 # 无感集成：常用命令自动调用 fzf
 # ============================================
 
-# --- 独立脚本别名（对应 ~/.local/bin/fzf-*）---
-function v -d "fzf 编辑文件"
-    fzf-edit $argv
-end
-function e -d "同 v"
-    fzf-edit $argv
-end
-function k -d "fzf 杀进程"
-    fzf-kill $argv
-end
-function fkill -d "同 k"
-    fzf-kill $argv
-end
-function gco -d "fzf 切换分支"
-    fzf-checkout $argv
-end
-function gsh -d "fzf 查看提交"
-    fzf-show $argv
-end
-
 # --- Ctrl+R: 调用 fzf-history 脚本 ---
 if type -q atuin; and type -q fzf
     bind \cr 'fzf-history; commandline -f repaint'
