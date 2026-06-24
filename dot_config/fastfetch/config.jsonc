@@ -23,6 +23,11 @@
       "keyColor": "cyan"
     },
     {
+      "type": "cpuusage",
+      "key": "  ├   cpu 使用率",
+      "keyColor": "cyan"
+    },
+    {
       "type": "gpu",
       "key": "  ├  gpu",
       "detectionMethod": "pci",
@@ -34,8 +39,18 @@
       "keyColor": "cyan"
     },
     {
+      "type": "physicaldisk",
+      "key": "  ├  󰋊 硬盘",
+      "keyColor": "cyan"
+    },
+    {
       "type": "disk",
-      "key": "  ├  󰋊 磁盘",
+      "key": "  ├  󱛟 分区",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "diskio",
+      "key": "  ├   磁盘 IO",
       "keyColor": "cyan"
     },
     {
@@ -50,7 +65,12 @@
     },
     {
       "type": "battery",
-      "key": "  └   电池",
+      "key": "  ├   电池",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "processes",
+      "key": "  └   进程数",
       "keyColor": "cyan"
     },
     {
@@ -60,7 +80,7 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌────────────────────── 软件 ──────────────────────┐"
+      "format": "\u001b[90m┌────────────────────── 系统 ──────────────────────┐"
     },
     {
       "type": "kernel",
@@ -68,13 +88,28 @@
       "keyColor": "magenta"
     },
     {
+      "type": "os",
+      "key": "  ├  󰘬 发行版",
+      "keyColor": "magenta"
+    },
+    {
       "type": "de",
-      "key": "   桌面环境",
+      "key": "  ├   桌面环境",
       "keyColor": "magenta"
     },
     {
       "type": "wm",
       "key": "  ├   窗口管理器",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "initSystem",
+      "key": "  ├   init",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "locale",
+      "key": "  ├   语言",
       "keyColor": "magenta"
     },
     {
@@ -112,14 +147,23 @@
       "keyColor": "green"
     },
     {
-      "type": "command",
+      "type": "publicip",
+      "key": "  ├  󰖩 公网 IP",
+      "keyColor": "green"
+    },
+    {
+      "type": "wifi",
       "key": "  ├  󰤨 WiFi",
-      "keyColor": "green",
-      "text": "iw dev 2>/dev/null | grep ssid | sed 's/.*ssid //' | head -1 || echo '未连接'"
+      "keyColor": "green"
     },
     {
       "type": "bluetooth",
-      "key": "  └   蓝牙",
+      "key": "  ├   蓝牙",
+      "keyColor": "green"
+    },
+    {
+      "type": "netio",
+      "key": "  └  󰞒 网络 IO",
       "keyColor": "green"
     },
     {
@@ -129,23 +173,50 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────── 运行状态 ────────────────────┐"
+      "format": "\u001b[90m┌──────────────────── 性能 ───────────────────────┐"
     },
     {
-      "type": "command",
-      "key": "  󱦟 系统已装",
-      "keyColor": "yellow",
-      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天"
-    },
-    {
-      "type": "uptime",
-      "key": "  󱫐 已运行",
+      "type": "loadavg",
+      "key": "  󰅟 负载",
       "keyColor": "yellow"
     },
     {
       "type": "command",
-      "key": "  └  󰏗 可更新",
+      "key": "  ├   cpu 温度",
       "keyColor": "yellow",
+      "text": "sensors 2>/dev/null | grep -m1 'Tctl' | awk '{print $2}' | tr -d '+°C' | xargs -I{} echo {}°C || sensors 2>/dev/null | grep -m1 'Package' | awk '{print $4}' | tr -d '+°C' | xargs -I{} echo {}°C || echo 'N/A'"
+    },
+    {
+      "type": "command",
+      "key": "  └  󰅐 上线时间",
+      "keyColor": "yellow",
+      "text": "uptime -p 2>/dev/null | sed 's/up //' || uptime | awk -F'up ' '{print $2}' | awk -F',' '{print $1}'"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[90m┌──────────────────── 状态 ───────────────────────┐"
+    },
+    {
+      "type": "command",
+      "key": "  󰃵 系统安装",
+      "keyColor": "cyan",
+      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天前"
+    },
+    {
+      "type": "datetime",
+      "key": "  ├   当前时间",
+      "format": "{hour}:{minute}:{second}",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "command",
+      "key": "  └  󰏗 可更新",
+      "keyColor": "cyan",
       "text": "pacman -Qu 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个"
     },
     {
