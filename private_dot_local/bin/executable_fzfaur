@@ -1,0 +1,28 @@
+#!/bin/bash
+# fzfaur:summary=Show a fuzzy-finder TUI for picking new AUR packages to install.
+# fzfaur:requires-sudo=true
+
+fzf_args=(
+  --multi
+  --height 100%
+  --preview 'yay -Siia {1}'
+  --preview-label='alt-p: 切换说明 · alt-b/B: 查看 PKGBUILD · alt-j/k: 滚动 · tab: 多选'
+  --preview-label-pos='bottom'
+  --preview-window 'down:65%:wrap'
+  --bind 'alt-p:toggle-preview'
+  --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
+  --bind 'alt-k:preview-up,alt-j:preview-down'
+  --bind 'alt-b:change-preview:yay -Gpa {1} | tail -n +5'
+  --bind 'alt-B:change-preview:yay -Siia {1}'
+  --color 'pointer:green,marker:green'
+)
+
+pkg_names=$(yay -Slqa | fzf "${fzf_args[@]}")
+
+if [[ -n $pkg_names ]]; then
+  source omarchy-sudo-keepalive
+
+  echo "$pkg_names" | sed 's/^/aur\//' | tr '\n' ' ' | xargs yay -S --noconfirm
+  sudo updatedb
+  omarchy-show-done
+fi
