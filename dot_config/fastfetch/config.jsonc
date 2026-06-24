@@ -17,16 +17,6 @@
       "keyColor": "cyan"
     },
     {
-      "type": "board",
-      "key": "  ├  �主板",
-      "keyColor": "cyan"
-    },
-    {
-      "type": "bios",
-      "key": "  ├   bios",
-      "keyColor": "cyan"
-    },
-    {
       "type": "cpu",
       "key": "  ├  cpu",
       "showPeCoreCount": true,
@@ -39,33 +29,18 @@
       "keyColor": "cyan"
     },
     {
-      "type": "vulkan",
-      "key": "  ├  vulkan",
-      "keyColor": "cyan"
-    },
-    {
       "type": "display",
       "key": "  ├   显示器",
       "keyColor": "cyan"
     },
     {
-      "type": "physicaldisk",
-      "key": "  ├  󰋊 硬盘",
-      "keyColor": "cyan"
-    },
-    {
       "type": "disk",
-      "key": "  ├  󱛟 分区",
+      "key": "  ├  󱛟 存储",
       "keyColor": "cyan"
     },
     {
       "type": "memory",
       "key": "  ├   内存",
-      "keyColor": "cyan"
-    },
-    {
-      "type": "physicalmemory",
-      "key": "  ├   内存条",
       "keyColor": "cyan"
     },
     {
@@ -76,11 +51,6 @@
     {
       "type": "battery",
       "key": "  ├   电池",
-      "keyColor": "cyan"
-    },
-    {
-      "type": "brightness",
-      "key": "  ├  󰃟 亮度",
       "keyColor": "cyan"
     },
     {
@@ -123,21 +93,6 @@
       "keyColor": "magenta"
     },
     {
-      "type": "icons",
-      "key": "  ├  󰀻 图标",
-      "keyColor": "magenta"
-    },
-    {
-      "type": "initSystem",
-      "key": "  ├   init",
-      "keyColor": "magenta"
-    },
-    {
-      "type": "locale",
-      "key": "  ├   语言",
-      "keyColor": "magenta"
-    },
-    {
       "type": "editor",
       "key": "  ├   编辑器",
       "keyColor": "magenta"
@@ -177,22 +132,6 @@
       "keyColor": "green"
     },
     {
-      "type": "command",
-      "key": "  ├  󰃵 mac 地址",
-      "keyColor": "green",
-      "text": "ip link 2>/dev/null | grep -m1 'link/ether' | awk '{print $2}' || echo 'N/A'"
-    },
-    {
-      "type": "publicip",
-      "key": "  ├  󰖩 公网 IP",
-      "keyColor": "green"
-    },
-    {
-      "type": "dns",
-      "key": "  ├  dns",
-      "keyColor": "green"
-    },
-    {
       "type": "wifi",
       "key": "  ├  󰤨 WiFi",
       "keyColor": "green"
@@ -203,10 +142,9 @@
       "keyColor": "green"
     },
     {
-      "type": "command",
-      "key": "  └  󰒓 网关",
-      "keyColor": "green",
-      "text": "ip route 2>/dev/null | grep default | awk '{print $3}' | head -1 || echo 'N/A'"
+      "type": "publicip",
+      "key": "  └  󰖩 公网 IP",
+      "keyColor": "green"
     },
     {
       "type": "custom",
@@ -215,11 +153,11 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────── 状态 ───────────────────────┐"
+      "format": "\u001b[90m┌──────────────────── 性能 ───────────────────────┐"
     },
     {
       "type": "loadavg",
-      "key": "  󰅟 负载",
+      "key": "  󰅟 系统负载",
       "keyColor": "yellow"
     },
     {
@@ -229,20 +167,8 @@
       "text": "sensors 2>/dev/null | grep -m1 'Tctl' | awk '{print $2}' | tr -d '+°C' | xargs -I{} echo {}°C || sensors 2>/dev/null | grep -m1 'Package' | awk '{print $4}' | tr -d '+°C' | xargs -I{} echo {}°C || echo 'N/A'"
     },
     {
-      "type": "command",
-      "key": "  ├  󰃵 系统安装",
-      "keyColor": "yellow",
-      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天前"
-    },
-    {
       "type": "uptime",
       "key": "  ├  󱫐 已运行",
-      "keyColor": "yellow"
-    },
-    {
-      "type": "datetime",
-      "key": "  ├   当前时间",
-      "format": "{year}-{month}-{day} {hour}:{minute}:{second}",
       "keyColor": "yellow"
     },
     {
@@ -258,16 +184,17 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌────────────── 用户 ──────────────────────────────┐"
+      "format": "\u001b[90m┌──────────────────── 其它 ───────────────────────┐"
     },
     {
-      "type": "users",
-      "key": "   登录用户",
+      "type": "datetime",
+      "key": "   当前时间",
+      "format": "{year}-{month}-{day} {hour}:{minute}:{second}",
       "keyColor": "blue"
     },
     {
-      "type": "terminalSize",
-      "key": "  ├   终端尺寸",
+      "type": "users",
+      "key": "  ├   登录用户",
       "keyColor": "blue"
     },
     {
@@ -276,9 +203,10 @@
       "keyColor": "blue"
     },
     {
-      "type": "player",
-      "key": "  └  󰎈 正在播放",
-      "keyColor": "blue"
+      "type": "command",
+      "key": "  └  󰃵 系统安装",
+      "keyColor": "blue",
+      "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天前"
     },
     {
       "type": "custom",
