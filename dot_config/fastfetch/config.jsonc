@@ -144,15 +144,9 @@
     },
     {
       "type": "command",
-      "key": "  󰏗 可更新",
+      "key": "  └  󰏗 可更新",
       "keyColor": "yellow",
       "text": "pacman -Qu 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个"
-    },
-    {
-      "type": "command",
-      "key": "  └   音频",
-      "keyColor": "yellow",
-      "text": "pactl info 2>/dev/null | grep 'Default Sink' | sed 's/.*: //' | head -1 || echo 'N/A'"
     },
     {
       "type": "custom",
