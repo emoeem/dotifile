@@ -1,4 +1,4 @@
---- Image EXIF preview using exiftool, with the actual image shown at the top.
+--- Image EXIF preview using exiftool, with image thumbnail + themed metadata.
 
 local M = {}
 
@@ -8,34 +8,40 @@ local function is_binary_data(line)
 end
 
 function M:preload(job)
-	local cache_url = ya.file_cache({ file = job.file, skip = 0 })
-	local cache_cha = cache_url and fs.cha(cache_url)
-	if cache_cha and cache_cha.len > 0 then
+	local mime = job.mime and job.mime:match(".*/(.*)$")
+	if not mime then
+		return
+	end
+
+	local no_skip = { skip = 0, file = job.file, args = job.args, area = job.area }
+	local cache = ya.file_cache(no_skip)
+	local cha = cache and fs.cha(cache)
+	if cha and cha.len and cha.len > 0 then
 		return true
 	end
 
-	local mime = job.mime and job.mime:match(".*/(.*)$")
-	if not mime then
-		return false
+	local mod
+	if mime == "svg+xml" then
+		mod = "svg"
+	else
+		local magick_mimes = {
+			avif = true, hei = true, heic = true, heif = true,
+			jxl = true, tiff = true, xml = true,
+		}
+		mod = magick_mimes[mime] and "magick" or "image"
 	end
-
-	local mod = mime == "svg+xml" and "svg" or "image"
-	local ok, err = require(mod):preload({ skip = 0, file = job.file })
-	if not ok and err then
-		return false, err
-	end
-	return true
+	return require(mod):preload(no_skip)
 end
 
 function M:peek(job)
 	self:preload(job)
 
-	local cache_url = ya.file_cache({ file = job.file, skip = 0 })
-
+	local no_skip = { skip = 0, file = job.file, args = job.args, area = job.area }
+	local cache = ya.file_cache(no_skip)
 	local image_h = 0
-	local rendered = cache_url
-		and fs.cha(cache_url)
-		and ya.image_show(cache_url, ui.Rect {
+	local rendered = cache
+		and fs.cha(cache)
+		and ya.image_show(cache, ui.Rect {
 			x = job.area.x, y = job.area.y,
 			w = job.area.w, h = math.floor(job.area.h * 0.5),
 		})
@@ -55,18 +61,26 @@ function M:peek(job)
 	local text_h = math.max(1, job.area.h - image_h)
 	local i, lines = 0, {}
 	repeat
-		local line, ev = child:read_line()
+		local raw, ev = child:read_line()
 		if ev == 1 then
 			return
 		elseif ev ~= 0 then
 			break
 		end
-		if is_binary_data(line) then
+		if is_binary_data(raw) then
 			goto next
 		end
 		i = i + 1
 		if i > job.skip then
-			table.insert(lines, ui.Line(ui.Span(line)))
+			local label, val = raw:match("^(.-)  +: (.*)")
+			if label then
+				table.insert(lines, ui.Line {
+					ui.Span(label .. ":  "):style(ui.Style():bold()),
+					ui.Span(val):style(th.spot.tbl_col or ui.Style():fg("blue")),
+				})
+			else
+				table.insert(lines, ui.Line(ui.Span(raw)))
+			end
 		end
 		::next::
 	until i >= job.skip + text_h
