@@ -16,7 +16,15 @@ image_filter = "lanczos3"
 # Plugin Previewers
 # ================================
 [[plugin.prepend_previewers]]
-mime = "{audio,video,image}/*"
+mime = "image/*"
+run = "exifaudio"
+
+[[plugin.prepend_previewers]]
+mime = "audio/*"
+run = "mediainfo"
+
+[[plugin.prepend_previewers]]
+mime = "video/*"
 run = "mediainfo"
 
 [[plugin.prepend_previewers]]
@@ -43,7 +51,15 @@ run = "mediainfo"
 # Plugin Preloaders
 # ================================
 [[plugin.prepend_preloaders]]
-mime = "{audio,video,image}/*"
+mime = "image/*"
+run = "exifaudio"
+
+[[plugin.prepend_preloaders]]
+mime = "audio/*"
+run = "mediainfo"
+
+[[plugin.prepend_preloaders]]
+mime = "video/*"
 run = "mediainfo"
 
 [[plugin.prepend_preloaders]]
