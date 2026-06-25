@@ -55,7 +55,10 @@ prepend_keymap = [
   # =======================
   # 压缩文件
   # =======================
-  { on = ["c","z"], run = "plugin augment-command.archive", desc = "创建压缩包" },
+  { on = ["c","z"],run = "plugin ouch", desc = "使用ouch进行压缩" },
+  
+
+  # =======================
   # 显示设置
   # =======================
   { on = ".",          run = "hidden toggle",        desc = "切换隐藏文件显示" },
@@ -88,7 +91,7 @@ prepend_keymap = [
   # =======================
   # 标签页管理
   # =======================
-  { on = "t", run = "plugin augment-command.tab_create -- --current", desc = "创建新标签页（使用当前目录）" },
+  { on = "t", run = "tab_create --current", desc = "创建新标签页（使用当前目录）" },
   { on = "1", run = "tab_switch 0", desc = "切换到第一个标签页" },
   { on = "2", run = "tab_switch 1", desc = "切换到第二个标签页" },
   { on = "3", run = "tab_switch 2", desc = "切换到第三个标签页" },
@@ -102,27 +105,21 @@ prepend_keymap = [
   { on = "=", run = "tab_switch 1 --relative",  desc = "切换到下一个标签页" },
   { on = "_", run = "tab_swap -1", desc = "与上一个标签页交换位置" },
   { on = "+", run = "tab_swap 1",  desc = "与下一个标签页交换位置" },
-
-  # =======================
-  # 布局管理
-  # =======================
-  { on = "L", run = "plugin toggle-ratio", desc = "循环切换面板布局（默认→预览扩大→预览最大→隐藏父面板）" },
-  { on = "H", run = "plugin toggle-ratio -- reset", desc = "重置布局到默认" },
-
+  
   { on = "<Esc>", run = "escape",             desc = "退出视觉模式、清除选择或取消搜索" },
   { on = "<C-[>", run = "escape",             desc = "退出视觉模式、清除选择或取消搜索" },
-  { on = "q",     run = "plugin augment-command.quit",               desc = "退出程序" },
-  { on = "Q",     run = "plugin augment-command.quit -- --no-cwd-file", desc = "退出且不输出cwd文件" },
+  { on = "q",     run = "quit",               desc = "退出程序" },
+  { on = "Q",     run = "quit --no-cwd-file", desc = "退出且不输出cwd文件" },
   { on = "<C-c>", run = "close",              desc = "关闭当前标签页，如是最后一个则退出" },
   { on = "<C-z>", run = "suspend",            desc = "挂起程序" },
 
   # =======================
   # 光标移动
   # =======================
-  { on = "i", run = "plugin augment-command.arrow -- -1", desc = "上一个文件" },
-  { on = "k", run = "plugin augment-command.arrow -- 1", desc = "下一个文件" },
-  { on = "<Up>",   run = "plugin augment-command.arrow -- -1", desc = "上一个文件" },
-  { on = "<Down>", run = "plugin augment-command.arrow -- 1", desc = "下一个文件" },
+  { on = "i", run = "arrow prev", desc = "上一个文件" },
+  { on = "k", run = "arrow next", desc = "下一个文件" },
+  { on = "<Up>",   run = "arrow prev", desc = "上一个文件" },
+  { on = "<Down>", run = "arrow next", desc = "下一个文件" },
   { on = "<C-i>", run = "arrow -50%",  desc = "向上移动半页" },
   { on = "<C-k>", run = "arrow 50%",   desc = "向下移动半页" },
   { on = "<S-i>", run = "arrow -100%", desc = "向上移动一页" },
@@ -138,10 +135,11 @@ prepend_keymap = [
   # =======================
   # 目录导航
   # =======================
-  { on = "j", run = "plugin augment-command.leave", desc = "返回上级目录" },
-  { on = "l", run = "plugin augment-command.enter", desc = "智能进入（目录/打开/解压）" },
-  { on = "<Left>",  run = "plugin augment-command.leave", desc = "返回上级目录" },
-  { on = "<Right>", run = "plugin augment-command.enter", desc = "智能进入（目录/打开/解压）" },
+  { on = "j", run = "leave", desc = "返回上级目录" },
+  { on = "l", run = "enter", desc = "进入子目录" },
+  { on = "<Left>",  run = "leave", desc = "返回上级目录" },
+  #{ on = "<Right>", run = "enter", desc = "进入子目录" },
+  { on = "<Right>", run = "plugin bypass smart-enter", desc = "进入光标下的目录或打开文件（智能进入 →）" },
   { on = "<S-Left>", run = "back",    desc = "后退到上一个目录" },
   { on = "<S-Right>", run = "forward", desc = "前进到下一个目录" },
   
@@ -166,44 +164,44 @@ prepend_keymap = [
   # =======================
   # 文件操作
   # =======================
-  { on = "o",         run = "plugin augment-command.open",                        desc = "打开选定文件" },
-  { on = "O",         run = "plugin augment-command.open -- --interactive",          desc = "交互式打开选定文件" },
-  { on = "<Enter>",   run = "plugin augment-command.open",                        desc = "打开选定文件" },
-  { on = "<S-Enter>", run = "plugin augment-command.open -- --interactive",          desc = "交互式打开选定文件" },
+  { on = "o",         run = "open",                        desc = "打开选定文件" },
+  { on = "O",         run = "open --interactive",          desc = "交互式打开选定文件" },
+  { on = "<Enter>",   run = "open",                        desc = "打开选定文件" },
+  { on = "<S-Enter>", run = "open --interactive",          desc = "交互式打开选定文件" },
   { on = "y",         run = "yank",                        desc = "复制选定文件" },
   { on = "x",         run = "yank --cut",                  desc = "剪切选定文件" },
-  { on = ["p","p"],         run = "plugin augment-command.paste",                       desc = "粘贴复制/剪切的文件" },
-  { on = ["p","f"],         run = "plugin augment-command.paste -- --force",               desc = "强制粘贴（覆盖现有文件）" },
+  { on = ["p","p"],         run = "paste",                       desc = "粘贴复制/剪切的文件" },
+  { on = ["p","f"],         run = "paste --force",               desc = "强制粘贴（覆盖现有文件）" },
   { on = "-",         run = "link",                        desc = "创建符号链接（绝对路径）" },
   { on = "_",         run = "link --relative",             desc = "创建符号链接（相对路径）" },
   { on = "<C-->",     run = "hardlink",                    desc = "创建硬链接" },
   { on = "Y",         run = "unyank",                      desc = "取消复制/剪切状态" },
   { on = "X",         run = "unyank",                      desc = "取消复制/剪切状态" },
-  { on = "d",         run = "plugin augment-command.remove",                      desc = "移动到回收站" },
-  { on = "D",         run = "plugin augment-command.remove -- --permanently",        desc = "永久删除" },
-  { on = "a",         run = "plugin augment-command.create",                      desc = "创建文件/目录（以/结尾创建目录）" },
-  { on = ";",         run = "plugin augment-command.shell -- --interactive",         desc = "运行交互式shell命令" },
-  { on = ":",         run = "plugin augment-command.shell -- --block --interactive", desc = "运行阻塞式shell命令" },
+  { on = "d",         run = "remove",                      desc = "移动到回收站" },
+  { on = "D",         run = "remove -- --permanently",        desc = "永久删除" },
+  { on = "a",         run = "create",                      desc = "创建文件/目录（以/结尾创建目录）" },
+  { on = ";",         run = "shell --interactive",         desc = "运行交互式shell命令" },
+  { on = ":",         run = "shell --block --interactive", desc = "运行阻塞式shell命令" },
   
   #================
   #重命名
   #================
-  { on = ["r","r"], run = "plugin augment-command.rename -- --cursor=before_ext", desc = "重命名文件或目录（光标在扩展名前）" },
-  { on = ["r","f"], run = "plugin augment-command.rename -- --empty=all", desc = "重命名文件并清空整个文件名" },
-  { on = ["r","i"], run = "plugin augment-command.rename -- --cursor=start", desc = "重命名文件（光标在文件名开头）" },
-  { on = ["r","a"], run = "plugin augment-command.rename -- --cursor=end", desc = "重命名文件（光标在文件名末尾）" },
-  { on = ["r","c"], run = "plugin augment-command.rename -- --empty=all", desc = "重命名文件并清空整个文件名" },
+  { on = ["r","r"], run = "rename -- --cursor=before_ext", desc = "重命名文件或目录（光标在扩展名前）" },
+  { on = ["r","f"], run = "rename -- --empty=all", desc = "重命名文件并清空整个文件名" },
+  { on = ["r","i"], run = "rename -- --cursor=start", desc = "重命名文件（光标在文件名开头）" },
+  { on = ["r","a"], run = "rename -- --cursor=end", desc = "重命名文件（光标在文件名末尾）" },
+  { on = ["r","c"], run = "rename -- --empty=all", desc = "重命名文件并清空整个文件名" },
   
  
 
   # =======================
   # 复制操作
-  { on = ["c", "c"], run = "plugin augment-command.copy -- --path", desc = "复制文件路径" },
-  { on = ["c", "d"], run = "plugin augment-command.copy -- --dirname", desc = "复制目录路径" },
-  { on = ["c", "f"], run = "plugin augment-command.copy -- --filename", desc = "复制文件名" },
-  { on = ["c", "n"], run = "plugin augment-command.copy -- --name_without_ext", desc = "复制文件名（不含扩展名）" },
-  { on = ["c", "m"], run = "plugin augment-command.rename -- --empty=stem --cursor=start", desc = "重命名文件并清空文件名（不含扩展名）" },
-  { on = ["c", "r"], run = "plugin augment-command.create", desc = "创建文件（以/结尾创建目录）" }, 
+  { on = ["c", "c"], run = "copy -- path", desc = "复制文件路径" },
+  { on = ["c", "d"], run = "copy -- dirname", desc = "复制目录路径" },
+  { on = ["c", "f"], run = "copy -- filename", desc = "复制文件名" },
+  { on = ["c", "n"], run = "copy -- name_without_ext", desc = "复制文件名（不含扩展名）" },
+  { on = ["c", "m"], run = "rename -- --empty=stem --cursor=start", desc = "重命名文件并清空文件名（不含扩展名）" },
+  { on = ["c", "r"], run = "create", desc = "创建文件（以/结尾创建目录）" },  
    
  
   # =======================
