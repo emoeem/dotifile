@@ -34,10 +34,10 @@
       "keyColor": "cyan"
     },
     {
-      "type": "cpu",
+      "type": "command",
       "key": "  ├   cpu 缓存",
-      "format": "L1: {10} | L2: {11} | L3: {12}",
-      "keyColor": "cyan"
+      "keyColor": "cyan",
+      "text": "lscpu 2>/dev/null | grep -E 'L1d|L2|L3' | awk '{print $1$2}' | tr '\n' ' ' | sed 's/ $//' || echo 'N/A'"
     },
     {
       "type": "gpu",
@@ -58,12 +58,15 @@
     },
     {
       "type": "disk",
-      "key": "  ├  󱛟 存储",
+      "key": "  ├  󱛟 根分区",
       "keyColor": "cyan",
-      "folders": [
-        { "path": "/", "label": "󰋊 root" },
-        { "path": "/home", "label": "󱂵 home" }
-      ]
+      "folders": "/"
+    },
+    {
+      "type": "disk",
+      "key": "  ├  󱂵 家目录",
+      "keyColor": "cyan",
+      "folders": "/home"
     },
     {
       "type": "memory",
@@ -76,21 +79,15 @@
       "keyColor": "cyan"
     },
     {
-      "type": "swap",
-      "key": "  ├  󰓡 交换",
-      "keyColor": "cyan"
+      "type": "command",
+      "key": "  ├  󰓡 ZRAM",
+      "keyColor": "cyan",
+      "text": "zramctl --noheadings --raw 2>/dev/null | awk '{print $4\"/\"$3}' | head -1 || echo 'N/A'"
     },
     {
       "type": "battery",
-      "key": "  ├   电池",
-      "format": "{4}% | 循环 {12} 次 | 健康度 {13}%",
+      "key": "  └   电池",
       "keyColor": "cyan"
-    },
-    {
-      "type": "command",
-      "key": "  └  󰓡 ZRAM",
-      "keyColor": "cyan",
-      "text": "zramctl 2>/dev/null | tail -1 | awk '{print $4\"/\"$3\" ( \"$5\" )\"}' || echo 'N/A'"
     },
     {
       "type": "custom",
@@ -262,11 +259,14 @@
       "keyColor": "yellow"
     },
     {
-      "type": "cpu",
+      "type": "cputemp",
       "key": "  ├   cpu 温度",
-      "keyColor": "yellow",
-      "temp": true,
-      "format": "{1} — 负载: {5}% / {6}% / {7}%"
+      "keyColor": "yellow"
+    },
+    {
+      "type": "cpuusage",
+      "key": "  ├   cpu 使用率",
+      "keyColor": "yellow"
     },
     {
       "type": "uptime",
@@ -296,7 +296,6 @@
     {
       "type": "datetime",
       "key": "  ├   时间",
-      "format": "{1} ({2})",
       "keyColor": "blue"
     },
     {
