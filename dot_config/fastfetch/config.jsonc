@@ -1,5 +1,16 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "display": {
+    "color": {
+      "keys": "magenta",
+      "title": "cyan",
+      "separator": "bright_black"
+    },
+    "key": {
+      "width": 18
+    },
+    "separator": "  →  "
+  },
   "logo": {
     "type": "builtin",
     "color": { "1": "cyan" },
@@ -20,7 +31,8 @@
       "type": "cpu",
       "key": "  ├  cpu",
       "showPeCoreCount": true,
-      "keyColor": "cyan"
+      "keyColor": "cyan",
+      "temp": true
     },
     {
       "type": "gpu",
@@ -36,7 +48,11 @@
     {
       "type": "disk",
       "key": "  ├  󱛟 存储",
-      "keyColor": "cyan"
+      "keyColor": "cyan",
+      "folders": [
+        { "path": "/", "label": "󰋊 root" },
+        { "path": "/home", "label": "󱂵 home" }
+      ]
     },
     {
       "type": "memory",
@@ -161,10 +177,10 @@
       "keyColor": "yellow"
     },
     {
-      "type": "command",
+      "type": "cpu",
       "key": "  ├   cpu 温度",
       "keyColor": "yellow",
-      "text": "sensors 2>/dev/null | grep -m1 'Tctl' | awk '{print $2}' | tr -d '+°C' | xargs -I{} echo {}°C || sensors 2>/dev/null | grep -m1 'Package' | awk '{print $4}' | tr -d '+°C' | xargs -I{} echo {}°C || echo 'N/A'"
+      "temp": true
     },
     {
       "type": "uptime",
@@ -212,6 +228,11 @@
       "type": "custom",
       "format": "\u001b[90m└──────────────────────────────────────────────────┘"
     },
-    "break"
+    "break",
+    {
+      "type": "colors",
+      "symbol": "circle",
+      "paddingLeft": 2
+    }
   ]
 }
