@@ -198,10 +198,10 @@ prepend_keymap = [
 
   # =======================
   # 复制操作
-  { on = ["c", "c"], run = "plugin augment-command.copy -- --path", desc = "复制文件路径" },
-  { on = ["c", "d"], run = "plugin augment-command.copy -- --dirname", desc = "复制目录路径" },
-  { on = ["c", "f"], run = "plugin augment-command.copy -- --filename", desc = "复制文件名" },
-  { on = ["c", "n"], run = "plugin augment-command.copy -- --name_without_ext", desc = "复制文件名（不含扩展名）" },
+  { on = ["c", "c"], run = "copy -- path", desc = "复制文件路径" },
+  { on = ["c", "d"], run = "copy -- dirname", desc = "复制目录路径" },
+  { on = ["c", "f"], run = "copy -- filename", desc = "复制文件名" },
+  { on = ["c", "n"], run = "copy -- name_without_ext", desc = "复制文件名（不含扩展名）" },
   { on = ["c", "m"], run = "plugin augment-command.rename -- --empty=stem --cursor=start", desc = "重命名文件并清空文件名（不含扩展名）" },
   { on = ["c", "r"], run = "plugin augment-command.create", desc = "创建文件（以/结尾创建目录）" }, 
    
