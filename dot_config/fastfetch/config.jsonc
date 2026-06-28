@@ -37,7 +37,7 @@
       "type": "command",
       "key": "  ├   cpu 缓存",
       "keyColor": "cyan",
-      "text": "lscpu 2>/dev/null | grep -E 'L1d|L2|L3' | awk '{print $1\" \"$3}' | tr '\n' ' | ' | sed 's/ | $//' || echo 'N/A'"
+      "text": "lscpu 2>/dev/null | awk '/L1d cache/ {printf \"L1d: %s \", $3$4} /L2 cache/ {printf \"L2: %s \", $3$4} /L3 cache/ {printf \"L3: %s\", $3$4}' || echo 'N/A'"
     },
     {
       "type": "gpu",
@@ -66,7 +66,7 @@
       "type": "command",
       "key": "  ├  󰆧 btrfs",
       "keyColor": "cyan",
-      "text": "btrfs subvolume list / 2>/dev/null | wc -l | xargs -I{} echo '{} 个子卷 | 类型: '$(btrfs filesystem df / 2>/dev/null | wc -l)' 类'|| echo '非 btrfs'"
+      "text": "btrfs filesystem df / 2>/dev/null | grep 'Data' | head -1 | awk '{print $3\" 已用 / 总空间: \"$5}' || echo 'N/A'"
     },
     {
       "type": "swap",
