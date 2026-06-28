@@ -7,7 +7,7 @@
       "separator": "bright_black"
     },
     "key": {
-      "width": 18
+      "width": 22
     },
     "separator": "  →  "
   },
@@ -29,16 +29,22 @@
     },
     {
       "type": "cpu",
-      "key": "  ├  cpu",
+      "key": "  ├   cpu",
       "showPeCoreCount": true,
-      "keyColor": "cyan",
-      "temp": true
+      "temp": true,
+      "keyColor": "cyan"
     },
     {
       "type": "gpu",
-      "key": "  ├  gpu",
+      "key": "  ├  󰢮 gpu",
       "detectionMethod": "pci",
       "keyColor": "cyan"
+    },
+    {
+      "type": "command",
+      "key": "  ├   gpu 温度",
+      "keyColor": "cyan",
+      "text": "nvidia-smi --query-gpu=temperature.gpu,utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -1 | awk -F', ' '{print $1\"°C | 使用率 \"$2\"%\"}' || echo 'N/A'"
     },
     {
       "type": "display",
@@ -60,6 +66,11 @@
       "keyColor": "cyan"
     },
     {
+      "type": "physicalmemory",
+      "key": "  ├   内存规格",
+      "keyColor": "cyan"
+    },
+    {
       "type": "swap",
       "key": "  ├  󰓡 交换",
       "keyColor": "cyan"
@@ -67,6 +78,7 @@
     {
       "type": "battery",
       "key": "  ├   电池",
+      "format": "{3}% | 循环 {14} 次 | 健康度 {15}%",
       "keyColor": "cyan"
     },
     {
@@ -101,6 +113,16 @@
     {
       "type": "wm",
       "key": "  ├   窗口管理器",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "board",
+      "key": "  ├   主板",
+      "keyColor": "magenta"
+    },
+    {
+      "type": "bios",
+      "key": "  ├   BIOS",
       "keyColor": "magenta"
     },
     {
@@ -140,6 +162,31 @@
     "break",
     {
       "type": "custom",
+      "format": "\u001b[90m┌──────────────────── 图形 ───────────────────────┐"
+    },
+    {
+      "type": "opengl",
+      "key": "   OpenGL",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "vulkan",
+      "key": "  ├   Vulkan",
+      "keyColor": "cyan"
+    },
+    {
+      "type": "command",
+      "key": "  └   安全启动",
+      "keyColor": "cyan",
+      "text": "mokutil --sb-state 2>/dev/null | grep -o 'enabled\\|disabled' || echo 'N/A'"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
       "format": "\u001b[90m┌──────────────────── 网络 ───────────────────────┐"
     },
     {
@@ -159,8 +206,40 @@
     },
     {
       "type": "publicip",
-      "key": "  └  󰖩 公网 IP",
+      "key": "  ├  󰖩 公网 IP",
       "keyColor": "green"
+    },
+    {
+      "type": "dns",
+      "key": "  └  󰛖 DNS",
+      "keyColor": "green"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m└──────────────────────────────────────────────────┘"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[90m┌──────────────────── 开发 ───────────────────────┐"
+    },
+    {
+      "type": "command",
+      "key": "   GCC",
+      "keyColor": "yellow",
+      "text": "gcc --version 2>/dev/null | head -1 | awk '{print $NF}' || echo 'N/A'"
+    },
+    {
+      "type": "command",
+      "key": "  ├   Rust",
+      "keyColor": "yellow",
+      "text": "rustc --version 2>/dev/null | awk '{print $2}' || echo 'N/A'"
+    },
+    {
+      "type": "command",
+      "key": "  └  󰡨 Podman",
+      "keyColor": "yellow",
+      "text": "podman ps -q 2>/dev/null | wc -l | tr -d ' ' | xargs -I{} echo {} 个运行中 || echo 'N/A'"
     },
     {
       "type": "custom",
@@ -200,27 +279,32 @@
     "break",
     {
       "type": "custom",
-      "format": "\u001b[90m┌──────────────────── 其它 ───────────────────────┐"
+      "format": "\u001b[90m┌──────────────────── 环境 ───────────────────────┐"
+    },
+    {
+      "type": "locale",
+      "key": "   区域",
+      "keyColor": "blue"
     },
     {
       "type": "datetime",
-      "key": "   当前时间",
-      "format": "{year}-{month}-{day} {hour}:{minute}:{second}",
+      "key": "  ├   时间",
+      "format": "{year}-{month}-{day} {hour}:{minute}:{second} ({timezone})",
       "keyColor": "blue"
     },
     {
       "type": "users",
-      "key": "  ├   登录用户",
+      "key": "  ├   用户",
       "keyColor": "blue"
     },
     {
       "type": "sound",
-      "key": "  ├   音频设备",
+      "key": "  ├   音频",
       "keyColor": "blue"
     },
     {
       "type": "command",
-      "key": "  └  󰃵 系统安装",
+      "key": "  └  󰃵 安装",
       "keyColor": "blue",
       "text": "echo $(( ($(date +%s) - $(stat -c %W / 2>/dev/null || echo $(date +%s))) / 86400 )) 天前"
     },
