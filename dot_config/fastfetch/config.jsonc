@@ -31,7 +31,12 @@
       "type": "cpu",
       "key": "  ├   cpu",
       "showPeCoreCount": true,
-      "temp": true,
+      "keyColor": "cyan"
+    },
+    {
+      "type": "cpu",
+      "key": "  ├   cpu 缓存",
+      "format": "L1: {10} | L2: {11} | L3: {12}",
       "keyColor": "cyan"
     },
     {
@@ -78,13 +83,14 @@
     {
       "type": "battery",
       "key": "  ├   电池",
-      "format": "{3}% | 循环 {14} 次 | 健康度 {15}%",
+      "format": "{4}% | 循环 {12} 次 | 健康度 {13}%",
       "keyColor": "cyan"
     },
     {
-      "type": "processes",
-      "key": "  └   进程数",
-      "keyColor": "cyan"
+      "type": "command",
+      "key": "  └  󰓡 ZRAM",
+      "keyColor": "cyan",
+      "text": "zramctl 2>/dev/null | tail -1 | awk '{print $4\"/\"$3\" ( \"$5\" )\"}' || echo 'N/A'"
     },
     {
       "type": "custom",
@@ -227,7 +233,7 @@
       "type": "command",
       "key": "   GCC",
       "keyColor": "yellow",
-      "text": "gcc --version 2>/dev/null | head -1 | awk '{print $NF}' || echo 'N/A'"
+      "text": "gcc --version 2>/dev/null | head -1 | awk '{print $(NF-1)}' || echo 'N/A'"
     },
     {
       "type": "command",
@@ -259,7 +265,8 @@
       "type": "cpu",
       "key": "  ├   cpu 温度",
       "keyColor": "yellow",
-      "temp": true
+      "temp": true,
+      "format": "{1} — 负载: {5}% / {6}% / {7}%"
     },
     {
       "type": "uptime",
@@ -289,7 +296,7 @@
     {
       "type": "datetime",
       "key": "  ├   时间",
-      "format": "{year}-{month}-{day} {hour}:{minute}:{second} ({timezone})",
+      "format": "{1} ({2})",
       "keyColor": "blue"
     },
     {
