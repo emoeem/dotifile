@@ -207,6 +207,12 @@ prepend_keymap = [
    
  
   # =======================
+  # 复制文件内容到系统剪贴板
+  # =======================
+  { on = ["c", "y"], run = "shell 'cat %s | wl-copy' --confirm", desc = "复制文件内容到剪贴板" },
+  { on = ["c", "i"], run = "shell 'wl-copy -t image/png < %s' --confirm", desc = "复制图片到剪贴板" },
+
+  # =======================
   # 搜索与查找
   # =======================
   { on = "f", run = "filter --smart", desc = "智能过滤文件" },
