@@ -28,6 +28,11 @@ use = "WhoSowSee/mdv-previewer"
 rev = "04aa2bd"
 hash = "64de0b69e2b4829bd7ad4c500a3f7a61"
 
+[[plugin.deps]]
+use = "grappas/wl-clipboard"
+rev = "8cc5524"
+hash = "5c587834c274dca9059092714ece1f18"
+
 [[flavor.deps]]
 use = "yazi-rs/flavors:dracula"
 rev = "0f9204b"
