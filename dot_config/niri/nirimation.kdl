@@ -1,0 +1,45 @@
+animations {
+    workspace-switch {
+        spring damping-ratio=0.78 stiffness=500 epsilon=0.0001
+    }
+
+    horizontal-view-movement {
+        spring damping-ratio=0.80 stiffness=550 epsilon=0.0001
+    }
+
+    window-open {
+        spring damping-ratio=0.6 stiffness=400 epsilon=0.001
+        custom-shader r"
+          vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+              float p = niri_clamped_progress;
+              vec2 coords = (coords_geo.xy - vec2(0.5, 0.0)) * size_geo.xy;
+              coords.y += (1.0 - p) * 1000.0;
+              float max_angle = mix(-0.5, 0.5, floor(niri_random_seed * 4.0) / 3.0);
+              float angle = (1.0 - p) * max_angle;
+              mat2 rotate = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+              coords = rotate * coords;
+              coords_geo = vec3(coords / size_geo.xy + vec2(0.5, 0.0), 1.0);
+              return texture2D(niri_tex, (niri_geo_to_tex * coords_geo).st);
+          }
+        "
+    }
+
+    window-close {
+        duration-ms 400
+        curve "ease-out-expo"
+        custom-shader r"
+          vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+              float p = niri_clamped_progress;
+              vec2 coords = (coords_geo.xy - vec2(0.5, 0.5)) * size_geo.xy;
+              float angle = p * mix(-0.8, 0.8, niri_random_seed);
+              float scale = 1.0 - p * 0.4;
+              mat2 rotate = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+              coords = rotate * coords / scale;
+              coords_geo = vec3(coords / size_geo.xy + vec2(0.5, 0.5), 1.0);
+              vec4 color = texture2D(niri_tex, (niri_geo_to_tex * coords_geo).st);
+              color.a *= 1.0 - p * p;
+              return color;
+          }
+        "
+    }
+}

@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+# fzf-fftools shared functions and picker definitions.
+
+FZF_FFTOOLS_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+PVID="$FZF_FFTOOLS_DIR/fzf-preview-video"
+[[ -x "$PVID" ]] || PVID="$(command -v fzf-preview-video 2>/dev/null || true)"
+
+FZF_BASE=(
+    --height 100%
+    --preview-label-pos bottom
+    --preview-window 'right:60%:nowrap:border-left'
+    --bind 'alt-p:toggle-preview'
+    --bind 'alt-w:toggle-preview-wrap'
+    --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
+    --bind 'ctrl-up:preview-up,ctrl-down:preview-down'
+    --color 'pointer:green,marker:green,header:cyan'
+)
+
+if command -v grc >/dev/null 2>&1; then
+    ffmpeg() { command grc command ffmpeg "$@" 2>&1; }
+elif command -v grcat >/dev/null 2>&1; then
+    ffmpeg() { command ffmpeg "$@" 2>&1 | grcat; }
+else
+    ffmpeg() {
+        command ffmpeg "$@" 2>&1 |
+            grep --color=always -E 'error|Error|ERROR|warning|Warning|WARNING|frame=|$'
+    }
+fi
+
+require_tools() {
+    local missing=() tool
+    for tool in "$@"; do
+        command -v "$tool" >/dev/null 2>&1 || missing+=("$tool")
+    done
+    if (( ${#missing[@]} > 0 )); then
+        printf '缺少命令: %s\n' "${missing[*]}" >&2
+        return 1
+    fi
+}
+
+media_candidates() {
+    local regex="$1"
+    fd --type f --ignore-case "$regex" --hidden --follow \
+        --exclude .git --exclude node_modules --exclude target --exclude .cache \
+        --exclude batch_out . 2>/dev/null
+}
+
+pick_with_preview() {
+    local header="$1"
+    fzf "${FZF_BASE[@]}" --header "$header" --preview "$PVID {}"
+}
+
+pick_multi_with_preview() {
+    local header="$1"
+    fzf "${FZF_BASE[@]}" --multi --header "$header" \
+        --bind 'ctrl-a:select-all,ctrl-d:deselect-all' \
+        --preview "$PVID {}"
+}
+
+pick_video() {
+    media_candidates '\.(mp4|mkv|mov|avi|webm|ts|m4v|flv|mpeg|mpg|wmv|3gp)$' |
+        pick_with_preview '选择视频 · Alt-P 切换预览'
+}
+
+pick_videos() {
+    media_candidates '\.(mp4|mkv|mov|avi|webm|ts|m4v|flv|mpeg|mpg|wmv|3gp)$' |
+        pick_multi_with_preview '选择视频 · Tab 多选 · Ctrl-A 全选'
+}
+
+pick_image() {
+    media_candidates '\.(jpg|jpeg|png|webp|bmp|gif|tiff|tif|avif|heic|heif|jxl|apng)$' |
+        pick_with_preview '选择图片 · Alt-P 切换预览'
+}
+
+pick_visual() {
+    media_candidates '\.(mp4|mkv|mov|avi|webm|ts|m4v|flv|mpeg|mpg|wmv|3gp|jpg|jpeg|png|webp|bmp|gif|tiff|tif|avif|heic|heif|jxl|apng)$' |
+        pick_with_preview '选择图片或视频 · Alt-P 切换预览'
+}
+
+pick_audio() {
+    media_candidates '\.(mp3|flac|wav|aac|m4a|opus|ogg|wma|ac3|aiff|ape)$' |
+        pick_with_preview '选择音频 · 预览封面或波形'
+}
+
+pick_media() {
+    media_candidates '\.(mp4|mkv|mov|avi|webm|ts|m4v|flv|mpeg|mpg|wmv|3gp|mp3|flac|wav|aac|m4a|opus|ogg|wma|ac3|aiff|ape|jpg|jpeg|png|webp|bmp|gif|tiff|tif|avif|heic|heif|jxl|apng)$' |
+        pick_with_preview '浏览媒体 · 图片/视频帧/音频封面'
+}
+
+pick_files() {
+    media_candidates '\.(mp4|mkv|mov|avi|webm|ts|m4v|flv|mpeg|mpg|wmv|3gp|jpg|jpeg|png|webp|bmp|gif|tiff|tif|avif)$' |
+        pick_multi_with_preview '选择文件 · Tab 多选 · Ctrl-A 全选'
+}
+
+confirm_run() {
+    printf '%s\n' "$1" | sed 's/ -/\n  -/g'
+    printf '\n执行？[Y/n] '
+    read -r choice
+    [[ "$choice" != n* ]] && eval "$1"
+}
+
+VENC_LIST=(
+    "copy             复制视频流，不重新编码"  "-vn              禁用视频流"
+    "─── AV1 ───"  "libsvtav1        SVT-AV1 软件  | -preset 0~13(6)  | -crf 0~63(23)"
+    "libaom-av1       AOM AV1 软件，极慢 | -cpu-used 0~8(5)  | -crf 0~63(30)"
+    "av1_nvenc        NVIDIA NVENC 硬件    | -preset p7~p1(p7) | -cq 0~255(36)"
+    "─── H.265/HEVC ───"
+    "libx265          x265 软件，最主流    | -preset veryslow~ultrafast(slow) | -crf 0~51(23)"
+    "hevc_nvenc       NVIDIA NVENC 硬件    | -preset p7~p1(p7) | -cq 0~51(26)"
+    "─── H.264/AVC ───"
+    "libx264          x264 软件，兼容最好   | -preset veryslow~ultrafast(slower) | -crf 0~51(23)"
+    "h264_nvenc       NVIDIA NVENC 硬件    | -preset p7~p1(p7) | -cq 0~51(23)"
+    "─── 其他 ───"
+    "libvpx-vp9       VP9 (Google) | -crf 0~63"  "prores_ks        ProRes 剪辑格式"
+)
+AENC_LIST=(
+    "copy 复制音频流" "-an 禁用音频流" "aac AAC | -b:a 128k~320k"
+    "opus Opus | -b:a 96k~192k" "mp3 MP3 | -b:a 128k~320k" "flac FLAC 无损"
+    "pcm_s16le WAV 无损" "libvorbis Vorbis" "ac3 AC-3"
+)
+PSMAP=(
+    "libsvtav1:-preset:0~13:6" "libaom-av1:-cpu-used:0~8:5"
+    "av1_nvenc:-preset:p7~p1:p7" "libx265:-preset:veryslow~ultrafast:slow"
+    "hevc_nvenc:-preset:p7~p1:p7" "libx264:-preset:veryslow~ultrafast:slower"
+)
+QMAP=(
+    "libsvtav1:-crf:0~63:23" "libaom-av1:-crf:0~63:30" "av1_nvenc:-cq:0~255:36"
+    "libx265:-crf:0~51:23" "hevc_nvenc:-cq:0~51:26" "libx264:-crf:0~51:23"
+)
+
+get_preset() {
+    local encoder="$1" item flag range default value
+    for item in "${PSMAP[@]}"; do
+        if [[ "$item" == "$encoder:"* ]]; then
+            IFS=: read -r _ flag range default <<< "$item"
+            value=$(printf '%s\n' "$range" | tr '~' '\n' | fzf --height 25% --header "$flag (默认 $default)")
+            printf '%s\n' "${value:-$default}"
+            return
+        fi
+    done
+}
+
+get_quality() {
+    local encoder="$1" item flag range default value
+    for item in "${QMAP[@]}"; do
+        if [[ "$item" == "$encoder:"* ]]; then
+            IFS=: read -r _ flag range default <<< "$item"
+            printf '%s [%s] 默认 %s: ' "$flag" "$range" "$default" >&2
+            read -r value
+            printf '%s\n' "${value:-$default}"
+            return
+        fi
+    done
+}
+
+pix_fmt() {
+    case "$1" in
+        *nvenc) echo "-pix_fmt p010le" ;;
+        libx265|libx264) echo "-pix_fmt yuv420p10le" ;;
+    esac
+}

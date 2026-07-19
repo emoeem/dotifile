@@ -1,0 +1,424 @@
+// 键盘鼠标触摸板等输入设备相关配置
+input {
+    keyboard {
+        xkb {
+            layout "us"
+        }
+
+        // 在启动上启用numlock，省略此设置会禁用它。
+        numlock
+    }
+
+    touchpad {
+        tap
+        scroll-method "two-finger"
+    }
+
+    mouse {
+        
+        accel-speed 1
+    }
+
+	// niri默认接管电源按钮的功能是sleep,这里禁用以使用关机功能
+	disable-power-key-handling
+	// 切换mod键：正常使用alt，嵌套窗口内使用Super。
+	mod-key "Super"
+	mod-key-nested "Alt"
+}
+
+output "eDP-2" {
+    mode "1920x1080@144.063"
+    scale 1
+    transform "normal"
+    position x=0 y=0
+    focus-at-startup
+}
+output "HDMI-A-1"{
+     mode "1600x900@60.000"
+     scale 1
+     transform "normal"
+     position x=-1600 y=0
+}
+
+
+// 截图保存位置
+screenshot-path "~/Pictures/Screenshots/Niri/%Y-%m-%d %H-%M-%S.png"
+
+// Alt+Tab 带缩略图的窗口切换
+recent-windows {
+    debounce-ms 750
+    open-delay-ms 150
+    previews {
+        max-height 480
+        max-scale 0.2
+    }
+    highlight {
+        active-color "#cba6f780"
+        urgent-color "#f38ba880"
+        padding 30
+        corner-radius 12
+    }
+    binds {
+        Mod+Tab         { next-window scope="workspace"; }
+        Mod+Shift+Tab   { previous-window scope="workspace"; }
+        Mod+grave       { next-window     filter="app-id"; }
+        Mod+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+
+// 可以使用wev来查询特定的按键对应的XKB名称
+binds {
+    // Mod-Shift-/显示重要的热键列表(通常与 Mod-? 相同)。
+    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+F1 {spawn-sh "pkill fcitx5 || fcitx5";}
+    Mod+A  {spawn "/usr/bin/lollypop";}
+    Mod+S  { spawn "/usr/bin/nautilus"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal" { spawn "/usr/bin/kitty"; }
+    Mod+D { spawn "rofi" "-show" "drun" "-show-icons"; }
+    Mod+Ctrl+Space { spawn "rofi" "-show" "emoji"; }
+    Mod+H { spawn "/usr/bin/copyq" "toggle"; }
+    Mod+O { spawn "swaylock"; }
+    Mod+X hotkey-overlay-title="Open a browser: firefox" { spawn "/usr/bin/firefox"; }
+    Mod+F4 hotkey-overlay-title="开关任务栏 Toggle bar" {spawn-sh "pkill waybar && pkill cava || waybar ";}
+
+    // 亮度控制 F1-F2
+    F1 { spawn-sh "echo $(($(cat /sys/class/backlight/nvidia_0/brightness)+10)) | tee /sys/class/backlight/nvidia_0/brightness"; }
+    F2 { spawn-sh "echo $(($(cat /sys/class/backlight/nvidia_0/brightness)-10)) | tee /sys/class/backlight/nvidia_0/brightness"; }
+
+    // 媒体控制 F7-F9
+    F7 { spawn "playerctl" "previous"; }
+    F8 { spawn "playerctl" "play-pause"; }
+    F9 { spawn "playerctl" "next"; }
+
+    // 音量控制 F10-F12
+    F10 { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    F11 { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
+    F12 { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+"; }
+
+
+
+    // 音量控制 allow-when-locked=true 在锁屏时的按键也会生效。这里的wpctl是wireplumber包中附带的
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+
+
+    // 开关overview
+    super+Tab repeat=false { toggle-overview; }
+    // 关闭窗口
+    Mod+Q repeat=false { close-window; }
+
+    //向左移动
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-down; }
+    Mod+Up    { focus-window-up; }
+    Mod+Right { focus-column-right; }
+    
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Down  { move-window-down; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Right { move-column-right; }
+
+    Mod+J { focus-column-first; }
+    Mod+L  { focus-column-last; }
+    Mod+Shift+J { move-column-to-first; }
+    Mod+Shift+L  { move-column-to-last; }
+
+    Mod+K      { focus-workspace-down; }
+    Mod+I        { focus-workspace-up; }
+    
+    Mod+Ctrl+K { move-column-to-workspace-down; }
+    Mod+Ctrl+I   { move-column-to-workspace-up; }
+    
+    Mod+Shift+K { move-workspace-down; }
+    Mod+Shift+I   { move-workspace-up; }
+
+
+    // 显示器焦点切换
+    Mod+Ctrl+Left  { focus-monitor-left; }
+    Mod+Ctrl+Down  { focus-monitor-down; }
+    Mod+Ctrl+Up    { focus-monitor-up; }
+    Mod+Ctrl+Right { focus-monitor-right; }
+
+    // 跨显示器移动窗口
+    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+
+    // 鼠标相关快捷键
+    Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+
+    Mod+WheelScrollRight      { focus-column-right; }
+    Mod+WheelScrollLeft       { focus-column-left; }
+    Mod+Ctrl+WheelScrollRight { move-column-right; }
+    Mod+Ctrl+WheelScrollLeft  { move-column-left; }
+
+    Mod+Shift+WheelScrollDown      { focus-column-right; }
+    Mod+Shift+WheelScrollUp        { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+    Mod+TouchpadScrollDown { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02+"; }
+    Mod+TouchpadScrollUp   { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.02-"; }
+
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+0 { focus-workspace 10; }
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
+    Mod+Shift+4 { move-column-to-workspace 4; }
+    Mod+Shift+5 { move-column-to-workspace 5; }
+    Mod+Shift+6 { move-column-to-workspace 6; }
+    Mod+Shift+7 { move-column-to-workspace 7; }
+    Mod+Shift+8 { move-column-to-workspace 8; }
+    Mod+Shift+9 { move-column-to-workspace 9; }
+    Mod+Shift+0 { move-column-to-workspace 10; }
+
+    // 最大化和全屏
+    Mod+W { toggle-windowed-fullscreen; }
+    Mod+F { expand-column-to-available-width; }
+    Mod+Shift+F { fullscreen-window; }
+
+    // 在layout中预设的宽度之间切换
+    Mod+R { switch-preset-column-width; }
+
+    // 改变宽度单位可以有pixels、百分比
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    // 改变高度
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    // 窗口堆叠相关快捷键
+    Ctrl+Left  { consume-or-expel-window-left; }    // 将窗口合并到左侧列
+    Ctrl+Right  { consume-or-expel-window-right; }   // 将窗口合并到右侧列
+    Mod+Comma  { consume-window-into-column; }      // 把窗口合并到当前列
+    Mod+Period { expel-window-from-column; }         // 把窗口从列中踢出
+    Mod+Shift+X hotkey-overlay-title="标签页模式 Toggle tabbed" { toggle-column-tabbed-display; } // 标签页/堆叠切换
+    Mod+C hotkey-overlay-title="居中列 Center column" { center-column; }
+
+    // 窗口高度预设
+    Mod+Shift+R { switch-preset-window-height; }     // 切换预设高度
+    Mod+Ctrl+R  { reset-window-height; }             // 重置高度
+
+    // 切换悬浮窗，改变平铺和悬浮窗焦点
+    Mod+V       { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+    
+    // 截图
+   // Mod+P { spawn-sh "FLAMESHOT_SCREENCAST_WLROOTS=1 flameshot gui"; }
+   // Mod+P { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:screen-toolkit" "annotate"; }
+    Mod+P { spawn "mark-shot"; }
+
+
+    // 针对虚拟机软件可能需要键盘控制权。allow-inhibiting=false 忽略当前快捷键本身
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    // 退出niri将显示一个确认对话框，以避免意外退出。
+    Mod+Shift+Q { quit; }
+
+    // 关闭显示器。移动鼠标或按下任意按键恢复
+   // Mod+Shift+P { power-off-monitors; }
+}
+
+
+// ==========================
+// 基础布局设置（正常工作区）
+// ==========================
+layout {
+    // 聚焦环
+    focus-ring {
+        width 2
+        active-color "#cba6f7"
+        inactive-color "#45475a"
+        urgent-color "#f38ba8"
+    }
+
+    // 窗口边框
+    border {
+        off
+        width 2
+        active-color "#cba6f7"
+        inactive-color "#45475a"
+        urgent-color "#f38ba8"
+    }
+
+    // 窗口阴影
+    shadow {
+        on
+        softness 20
+        spread 2
+        offset x=-4 y=-4
+        color "rgba(0, 0, 0, 0.5)"
+    }
+
+    // 标签指示器
+    tab-indicator {
+        //active-color "#cba6f7"
+        //inactive-color "#460594"
+        //urgent-color "#f38ba8"
+    }
+
+    // 插入提示
+    insert-hint {
+        //color "#cba6f780"
+    }
+
+    // 窗口间距
+    gaps 3
+
+    // 列宽预设（Mod+R 切换）
+    preset-column-widths {
+        proportion 0.5
+        proportion 0.2444
+        proportion 0.7556
+    }
+
+     // 存在多个窗口时，未最大化的窗口不自动居中，方便分屏
+    center-focused-column "never"
+    // 只有一个窗口时自动居中显示
+    always-center-single-column
+}
+
+
+// =======================================================
+layer-rule {
+    match namespace="^quickshell-overview$"
+    place-within-backdrop true
+}
+
+
+// ==========================
+// Overview 行为设置（可选）
+// ==========================
+overview {
+    zoom 0.5
+    // 关闭 overview 中 workspace 的阴影（更干净）
+    workspace-shadow {
+        off
+    }
+}
+
+
+
+// 覆盖由niri启动的进程的环境变量
+environment {
+    LC_MESSAGES "zh_CN.UTF-8"
+    XMODIFIERS "@im=fcitx"
+    //QT_IM_MODULES "fcitx"
+    //GTK_IM_MODULE null
+    //SDL_IM_MODULE null
+    //GLFW_IM_MODULE null
+    //QT_QPA_PLATFORMTHEME "qt6ct"
+    // GSK_RENDERER "vulkan"
+    XDG_MENU_PREFIX "arch- kbuildsycoca6" 
+}
+
+// 启动niri时自动启动的软件
+spawn-at-startup "/usr/bin/fcitx5"
+spawn-at-startup "/usr/bin/waybar"
+spawn-at-startup "/home/emo/.local/bin/battery-monitor"
+spawn-at-startup "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+spawn-at-startup "swaync"
+spawn-at-startup "/usr/bin/copyq" "--start-server"
+spawn-at-startup "flatpak" "run" "com.gopeed.Gopeed" "--hidden"
+spawn-at-startup "awww-daemon"
+//spawn-at-startup "/usr/bin/noctalia"
+spawn-at-startup "/home/emo/.local/bin/set-wallpapers"
+spawn-at-startup "blueman-applet"
+spawn-at-startup "nm-applet"
+
+hotkey-overlay {
+    // 跳过"重要的热键"弹出窗口。
+    skip-at-startup
+}
+
+
+// 忽略软件自带的装饰(例如标题栏)
+prefer-no-csd
+
+// 指定光标的主题和大小，打字时隐藏光标
+cursor {
+    xcursor-theme "Dracula-cursors"
+    xcursor-size 24
+}
+
+window-rule {
+    match app-id="flameshot" title="flameshot-pin"
+    focus-ring {
+        off
+    }
+    border {
+        off
+    }
+    shadow {
+        off
+    }
+}
+
+window-rule {
+    match app-id="scrcpy" title="PJE110"
+    default-column-width { proportion 0.2444; }
+}
+
+window-rule {
+    match app-id="firefox"     title="我的足迹"
+    match app-id="wechat"  title="图片和视频"
+    match app-id="wechat"  title="朋友圈"
+    match app-id="wechat"  title="添加朋友" 
+    match app-id="QQ"      title="图片查看器"
+    match app-id="QQ"      title="群聊的聊天记录"
+    match app-id="QQ"      title="综合搜索"
+    match app-id="flameshot" title="flameshot-pin"
+    match app-id="chrome-nngceckbapebfimnlniiiahkandclblb-Default"
+    match app-id="btrfs-assistant"
+    match app-id="copyq"
+    open-floating true
+}
+window-rule {
+    match app-id="firefox"
+    match app-id="libreoffice-startcenter"
+    match app-id="libreoffice-writer"
+    match app-id="libreoffice-draw"
+    match app-id="libreoffice-calc"
+    match app-id="libreoffice-base"
+    match app-id="libreoffice-math"
+    match app-id="libreoffice-impress"
+    match app-id="code"
+    match app-id="org.kde.dolphin"
+    match app-id="org.gnome.Nautilus"
+    match app-id="nemo"
+    match app-id="helium"
+    match app-id="io.missioncenter.MissionCenter"
+    open-maximized true
+
+}
+
+
+
+// 禁用鼠标左上角热脚
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+
+include "./noctalia.kdl"
+
+
+include "animation.kdl"
