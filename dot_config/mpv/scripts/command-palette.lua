@@ -1,1 +1,1 @@
-404: Not Found
+-- command-palette: need reinstall from github
