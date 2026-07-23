@@ -130,7 +130,7 @@ abbr -a -- untar  'tar -zxvf'
 # 其他
 abbr -a -- please 'sudo'
 abbr -a -- hw     'hwinfo --short'
-abbr -a -- mkdirp 'mkdir -p'
+abbr -a -- mk 'mkdir -p'
 
 
 # --------------------------------------------
