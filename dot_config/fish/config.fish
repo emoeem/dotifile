@@ -214,6 +214,11 @@ if type -q atuin; and type -q fzf
     bind \cr _atuin_fzf_search
 end
 
+# 禁掉 fish 自带的 Alt+r（history-token-search-backward），
+# 避免和 Ctrl+r（fzf+atuin 历史搜索）功能重复
+bind -e \er 2>/dev/null
+bind -M insert -e \er 2>/dev/null
+
 # --- tldr：man 的现代化替代 ---
 # 优先用 tldr 查速查表，找不到再回退到传统 man
 # 安装：sudo pacman -S tldr
