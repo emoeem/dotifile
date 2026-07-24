@@ -61,8 +61,12 @@ if type -q fzf
     set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always --line-range :100 {}' --preview-window right:60%:wrap"
     set -gx FZF_ALT_C_OPTS "--preview 'eza -T --level=2 --color=always {} | head -200' --preview-window right:60%:wrap"
 
-    # 全局外观：80% 高度、输入框置底、带边框、循环选择、预览区上下翻动
-    set -gx FZF_DEFAULT_OPTS "--height 80% --layout=reverse --border --inline-info --cycle --bind alt-k:preview-up,alt-j:preview-down"
+    # 全局外观：全屏、预览键、循环选择
+    set -gx FZF_DEFAULT_OPTS "--height 100% --layout=reverse --border --cycle --inline-info \
+        --bind 'alt-p:toggle-preview' \
+        --bind 'alt-w:toggle-preview-wrap' \
+        --bind 'alt-k:preview-up,alt-j:preview-down' \
+        --bind 'alt-u:preview-half-page-up,alt-d:preview-half-page-down'"
 end
 
 
@@ -214,9 +218,71 @@ if type -q atuin; and type -q fzf
     bind \cr _atuin_fzf_search
 end
 
-# 显式屏蔽 Alt+r，避免和 Ctrl+r（历史搜索）混淆
-bind \er '' 2>/dev/null
-bind -M insert \er '' 2>/dev/null
+# ============================================
+# fzf 快捷键全集（全屏风格）
+# ============================================
+
+# --- Ctrl+R — Fish 原生历史（只插入不执行）---
+if type -q fzf
+    function _fzf_history
+        builtin history -z | fzf --height 100% --read0 --print0 \
+            --scheme=history --prompt "History> " | string split0 | read -l r
+        and commandline -r -- $r
+    end
+    bind \cr _fzf_history
+    bind -M insert \cr _fzf_history
+end
+
+# --- Alt+E — fzf 选文件 → nvim 编辑 ---
+if type -q fzf
+    function _fzf_edit
+        set f (fd --type f --hidden --follow --exclude .git 2>/dev/null | \
+            fzf --height 100% --preview 'bat --color=always --line-range :100 {}' \
+                --prompt "Edit> ")
+        [ -n "$f" ] && $EDITOR $f
+    end
+    bind \ee _fzf_edit
+    bind -M insert \ee _fzf_edit
+end
+
+# --- Alt+V — fzf 选媒体 → mpv 播放 ---
+if type -q fzf
+    function _fzf_media
+        set f (fd --type f -e mp4 -e mkv -e avi -e mov -e mp3 -e flac -e wav \
+            --hidden --follow --exclude .git 2>/dev/null | \
+            fzf --height 100% --preview 'fzf-preview-video {}' \
+                --prompt "Media> ")
+        [ -n "$f" ] && mpv "$f"
+    end
+    bind \ev _fzf_media
+    bind -M insert \ev _fzf_media
+end
+
+# --- Alt+G — Git 面板（优先 lazygit）---
+function _fzf_git
+    if type -q lazygit; lazygit
+    else if type -q fzf-git; fzf-git
+    else echo "no git tool"; end
+end
+bind \eg _fzf_git
+bind -M insert \eg _fzf_git
+
+# --- Alt+R — Atuin 全局历史（只插入）---
+if type -q atuin
+    function _atuin_history
+        atuin search --interactive 2>/dev/null
+    end
+    bind \er _atuin_history
+    bind -M insert \er _atuin_history
+else if type -q fzf
+    function _fzf_history_alt
+        builtin history -z | fzf --height 100% --read0 --print0 \
+            --scheme=history --prompt "History> " | string split0 | read -l r
+        and commandline -r -- $r
+    end
+    bind \er _fzf_history_alt
+    bind -M insert \er _fzf_history_alt
+end
 
 # --- tldr：man 的现代化替代 ---
 # 优先用 tldr 查速查表，找不到再回退到传统 man
